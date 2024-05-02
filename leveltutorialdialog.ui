@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LevelTutorialDialog</class>
+ <widget class="QDialog" name="LevelTutorialDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {
+	background-color: #FFFFFF
+}</string>
+  </property>
+  <widget class="QPushButton" name="continueButton">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>510</y>
+     <width>251</width>
+     <height>70</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    border: 5px solid #2A7F46;
+    border-radius: 10px;
+    background-color: #34A853;
+    color: white;
+    font: bold 24px;
+    padding: 10px;
+    min-width: 30px;
+    min-height: 40px;
+}
+
+QPushButton:hover {
+    background-color: #2C974B;
+}
+
+QPushButton:pressed {
+    background-color: #278040;
+}</string>
+   </property>
+   <property name="text">
+    <string>CONTINUE</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="descriptionLabel">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>100</y>
+     <width>500</width>
+     <height>400</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>500</width>
+     <height>400</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>600</width>
+     <height>500</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+	color: black;
+}</string>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Welcome to the first level of our digital circuit design game! Here, you'll explore how an AND gate functions.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+&lt;strong&gt;What is an AND Gate?&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;
+An AND gate is a basic digital logic gate that outputs a true value only when all its inputs are true. In digital circuits, logic gates like the AND gate are used to carry out Boolean algebra operations, which are critical in computer and electronic systems.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+&lt;strong&gt;Getting Started:&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;
+Find the AND gate in the left sidebar and place it on the canvas.&lt;br/&gt;
+Your task is to connect the inputs and output of the AND gate correctly.&lt;br/&gt;
+Refer to the truth table in the sidebar to understand how different input combinations affect the output.&lt;br/&gt;&lt;br/&gt;
+Experiment with different configurations and use the &amp;quot;Run&amp;quot; button to see how your connections influence the result. Enjoy discovering how the AND gate works through your own trials!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="titleLabel">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>20</y>
+     <width>501</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel {
+	font: bold 32px;
+	color: black;
+}</string>
+   </property>
+   <property name="text">
+    <string>Level 1: Exploring the AND Gate</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

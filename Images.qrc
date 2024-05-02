@@ -1,0 +1,57 @@
+<RCC>
+    <qresource prefix="/gates">
+        <file>orGate.png</file>
+        <file>homeButton.jpg</file>
+        <file>and.png</file>
+        <file>not.png</file>
+        <file>or.png</file>
+        <file>andPorts.png</file>
+        <file>inputGateOff.png</file>
+        <file>inputGateOn.png</file>
+        <file>OutPutGateSpriteNoConnection.png</file>
+        <file>OutPutGateSpriteOff.png</file>
+        <file>OutPutGateSpriteOn.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>robot/robot_and.png</file>
+        <file>robot/robot_not.png</file>
+        <file>robot/robot_or.png</file>
+        <file>robot/robot_point.png</file>
+        <file>examples.png</file>
+    </qresource>
+    <qresource prefix="/rainbowGates">
+        <file>andRed.png</file>
+        <file>andBlue.png</file>
+        <file>andGreen.png</file>
+        <file>andOrange.png</file>
+        <file>andPink.png</file>
+        <file>andPurple.png</file>
+        <file>andYellow.png</file>
+        <file>orPink.png</file>
+        <file>orPurple.png</file>
+        <file>orBlue.png</file>
+        <file>orGreen.png</file>
+        <file>orYellow.png</file>
+        <file>orOrange.png</file>
+        <file>orRed.png</file>
+        <file>notPink.png</file>
+        <file>notPurple.png</file>
+        <file>notBlue.png</file>
+        <file>notGreen.png</file>
+        <file>notYellow.png</file>
+        <file>notOrange.png</file>
+        <file>notRed.png</file>
+        <file>gateFaces.png</file>
+    </qresource>
+    <qresource prefix="/gatePorts">
+        <file>andGatePorts.png</file>
+        <file>orGatePorts.png</file>
+        <file>notGatePorts.png</file>
+        <file>nandGatePorts.png</file>
+        <file>norGatePorts.png</file>
+        <file>xorGatePorts.png</file>
+        <file>truthTable.png</file>
+        <file>lightOff.png</file>
+        <file>lightOn.png</file>
+    </qresource>
+</RCC>
