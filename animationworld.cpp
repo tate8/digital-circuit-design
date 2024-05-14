@@ -3,8 +3,7 @@
 AnimationWorld::AnimationWorld(int initWidth, int initHeight)
     : width(initWidth), height(initHeight), gravity(0.0f, 0.5f), theWorld(new b2World(gravity))
 {
-    // Bodies for background animation
-    initializeBodies(20);
+
 }
 
 AnimationWorld::AnimationWorld()
@@ -18,25 +17,6 @@ AnimationWorld::~AnimationWorld()
 {
     delete confettiWorld;
     delete theWorld;
-}
-
-void AnimationWorld::initializeBodies(int numBodies)
-{
-    for (int i = 0; i < numBodies; i++)
-    {
-        // Pixel coords converted to box2D coords.
-        float x = randomPosition(this -> width) / SCALE;
-        float y = randomPosition(this -> height) / SCALE;
-        float dynamicBoxSize = 1.0f / SCALE;
-        float density = 1.0f;
-        float friction = 0.3f;
-        float restitution = 0.8f;
-        float angularVelocity = 2.0f;
-        float linearSpeed = randomSpeed(1.0f, 3.0f);
-        b2Vec2 linearVelocity(0, linearSpeed);
-        float initialAngle = QRandomGenerator::global()->bounded(2 * M_PI);
-        createBody(x, y, dynamicBoxSize, density, friction, restitution, angularVelocity, linearVelocity, initialAngle);
-    }
 }
 
 void AnimationWorld::createBody(float posX, float posY, float boxSize, float density, float friction, float restitution, float angularVelocity, b2Vec2 linearVelocity, float initialAngle)
@@ -80,18 +60,24 @@ void AnimationWorld::createBody(float posX, float posY, float boxSize, float den
     bodyImageMap[body] = gateImages[randomIndex];
 }
 
+void AnimationWorld::createRandomBodyAtTop()
+{
+    float x = randomPosition(this -> width) / SCALE;
+    float y = -BODY_MARGIN / SCALE;
+    float dynamicBoxSize = 1.0f / SCALE;
+    float density = 1.0f;
+    float friction = 0.3f;
+    float restitution = 0.8f;
+    float angularVelocity = 2.0f;
+    float linearSpeed = randomSpeed(MIN_SPEED, MAX_SPEED);
+    b2Vec2 linearVelocity(0, linearSpeed);
+    float initialAngle = QRandomGenerator::global()->bounded(2 * M_PI);
+    createBody(x, y, dynamicBoxSize, density, friction, restitution, angularVelocity, linearVelocity, initialAngle);
+}
+
 QString AnimationWorld::getImageForBody(b2Body* body) const
 {
     return bodyImageMap.value(body, "");
-}
-
-void AnimationWorld::resetBody(b2Body *body)
-{
-    float x = randomPosition(this->width) / SCALE;
-    float y = -BODY_MARGIN / SCALE;  // Reset to top
-    body->SetTransform(b2Vec2(x, y), 0);
-    float linearSpeed = randomSpeed(1.0f, 3.0f);
-    b2Vec2 linearVelocity(0, linearSpeed);
 }
 
 void AnimationWorld::resizeWorld(int newWidth, int newHeight)
@@ -128,14 +114,38 @@ b2World *AnimationWorld::getWorld() const
 void AnimationWorld::simulateWorld()
 {
     theWorld->Step(TIMESTEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+
+    int randomNumber = QRandomGenerator::global()->bounded(100);
+    bool shouldGenerateNewBody = randomNumber < GENERATION_PERCENT;
+
+    // Generate a new shape
+    if (shouldGenerateNewBody)
+    {
+        createRandomBodyAtTop();
+    }
+
     float screenHeight = this->height;
 
     // Check if any body has hit the "ground"
-    for (auto& body : bodies)
+    for (auto it = bodies.begin(); it != bodies.end();)
     {
-        if (body->GetPosition().y * SCALE  - BODY_MARGIN > screenHeight)
+        auto& body = *it;
+        // Assuming BODY_MARGIN is defined elsewhere
+        float bodyBottomPosition = body->GetPosition().y * SCALE - BODY_MARGIN;
+
+        // If the bottom of the body is below the screenHeight
+        if (bodyBottomPosition > screenHeight)
         {
-            resetBody(body);
+            // Destroy the body from the world
+            theWorld->DestroyBody(body);
+
+            // Remove the body from the bodies vector
+            it = bodies.erase(it);
+        }
+        else
+        {
+            // Move to the next element
+            ++it;
         }
     }
 }

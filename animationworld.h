@@ -23,6 +23,9 @@ public:
     static constexpr int VELOCITY_ITERATIONS = 8;
     static constexpr int POSITION_ITERATIONS = 3;
     static constexpr float BODY_MARGIN = 50.0f;
+    static constexpr float MIN_SPEED = 6.0f;
+    static constexpr float MAX_SPEED = 10.0f;
+    static constexpr float GENERATION_PERCENT = 5;
 
     /// @brief The Scale factor is used to convert between pixels and Box2D world
     /// coordinates. Pixels are converted to world coordinates by dividing by SCALE.
@@ -99,10 +102,6 @@ private:
     /// @brief List of all bodies created for background animation.
     QVector<b2Body*> bodies{};
 
-    /// @brief Initializes a specific number of bodies.
-    /// @param num - the number of bodies to create in the world
-    void initializeBodies(int num);
-
     /// @brief Creates a new physics body in the world.
     /// @param posX - x-coordinate in pixels
     /// @param posY - y-coordinate in pixels
@@ -115,9 +114,8 @@ private:
     /// @param initialAngle - initial angle
     void createBody(float posX, float posY, float boxSize, float density, float friction, float restitution, float angularVelocity, b2Vec2 linearVelocity, float initialAngle);
 
-    /// @brief Resets a body to a new random position near the top of the screen.
-    /// @param pointer to the body to reset
-    void resetBody(b2Body* body);
+    /// @brief Creates a random body at the top of the screen
+    void createRandomBodyAtTop();
 
     /// @brief Generates a random coordinate value
     /// @param max - the upper limit of the random value
