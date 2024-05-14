@@ -2,15 +2,15 @@
 /// Reviewed by leo Ramirez
 
 #include "circuitcanvas.h"
-#include "drawableandgate.h"
-#include "drawablenotgate.h"
-#include "drawableorgate.h"
-#include "drawableinputgate.h"
-#include "drawableoutputgate.h"
-#include "drawablenorgate.h"
-#include "drawablexorgate.h"
-#include "drawablenandgate.h"
-#include "drawablesandboxoutputgate.h"
+#include "DrawableGates/drawableandgate.h"
+#include "DrawableGates/drawablenotgate.h"
+#include "DrawableGates/drawableorgate.h"
+#include "DrawableGates/drawableinputgate.h"
+#include "DrawableGates/drawableoutputgate.h"
+#include "DrawableGates/drawablenorgate.h"
+#include "DrawableGates/drawablexorgate.h"
+#include "DrawableGates/drawablenandgate.h"
+#include "DrawableGates/drawablesandboxoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
 

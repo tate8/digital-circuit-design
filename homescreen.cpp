@@ -1,7 +1,6 @@
 /// CS3505 - Digital Circuit Design Game
 /// Reviewed by Jonathan Bodily
 #include "homescreen.h"
-#include "qmessagebox.h"
 #include "ui_homescreen.h"
 #include "mainwindow.h"
 #include "animationworld.h"

@@ -5,7 +5,7 @@
 /// Reviewed by Jasmine Robbins
 
 #include <QWidget>
-#include "gate.h"
+#include "Gates/gate.h"
 #include "truthtable.h"
 #include "wire.h"
 #include "circuitmodel.h"

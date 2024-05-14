@@ -4,7 +4,7 @@
 /// CS3505 - Digital Circuit Design Game
 /// Reviewed by Leo Ramirez
 
-#include "drawablegate.h"
+#include "DrawableGates/drawablegate.h"
 
 /// \brief The DrawableWire class hold methods to deal with the drawable state of a wire
 /// as well as a Gates to record the connections of this wire

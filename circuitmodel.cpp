@@ -3,15 +3,15 @@
 
 #include "circuitmodel.h"
 #include "QtCore/qdebug.h"
-#include "andgate.h"
-#include "orgate.h"
-#include "inputgate.h"
-#include "outputgate.h"
-#include "sandboxoutputgate.h"
-#include "notgate.h"
-#include "nandgate.h"
-#include "xorgate.h"
-#include "norgate.h"
+#include "Gates/andgate.h"
+#include "Gates/orgate.h"
+#include "Gates/inputgate.h"
+#include "Gates/outputgate.h"
+#include "Gates/sandboxoutputgate.h"
+#include "Gates/notgate.h"
+#include "Gates/nandgate.h"
+#include "Gates/xorgate.h"
+#include "Gates/norgate.h"
 
 CircuitModel::CircuitModel(QObject* parent) : QObject(parent)
 {

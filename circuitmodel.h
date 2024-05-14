@@ -5,7 +5,7 @@
 /// Reviewed by Tate Larkin
 
 #include <QObject>
-#include "gate.h"
+#include "Gates/gate.h"
 #include "wire.h"
 #include "GateTypes.h"
 

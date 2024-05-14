@@ -5,7 +5,7 @@
 /// Reviewed by Tate Larkin
 
 #include <QObject>
-#include "Gate.h"
+#include "Gates/gate.h"
 
 /// @brief The Wire class represents a connection between two
 /// logic gates in a digital circuit. The wire helps propogate

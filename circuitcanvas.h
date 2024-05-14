@@ -7,18 +7,18 @@
 #include <QWidget>
 #include <QVector>
 #include <QPen>
-#include "drawablegate.h"
-#include "drawableinputgate.h"
-#include "andgate.h"
+#include "DrawableGates/drawablegate.h"
+#include "DrawableGates/drawableinputgate.h"
+#include "Gates/andgate.h"
 #include "drawablewire.h"
-#include "orgate.h"
-#include "drawableoutputgate.h"
-#include "sandboxoutputgate.h"
-#include "inputgate.h"
-#include "notgate.h"
-#include "norgate.h"
-#include "nandgate.h"
-#include "xorgate.h"
+#include "Gates/orgate.h"
+#include "DrawableGates/drawableoutputgate.h"
+#include "Gates/sandboxoutputgate.h"
+#include "Gates/inputgate.h"
+#include "Gates/notgate.h"
+#include "Gates/norgate.h"
+#include "Gates/nandgate.h"
+#include "Gates/xorgate.h"
 
 /// \brief A stateless circuit canvas widget
 class CircuitCanvas : public QWidget

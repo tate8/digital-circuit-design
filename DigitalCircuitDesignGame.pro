@@ -55,39 +55,39 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
-    andgate.cpp \
+    Gates/andgate.cpp \
+    Gates/gate.cpp \
     animationworld.cpp \
     circuitmodel.cpp \
-    drawableinputgate.cpp \
-    drawablenandgate.cpp \
-    drawablenorgate.cpp \
-    drawablenotgate.cpp \
-    drawableorgate.cpp \
-    drawableoutputgate.cpp \
-    drawablesandboxoutputgate.cpp \
+    DrawableGates/drawableinputgate.cpp \
+    DrawableGates/drawablenandgate.cpp \
+    DrawableGates/drawablenorgate.cpp \
+    DrawableGates/drawablenotgate.cpp \
+    DrawableGates/drawableorgate.cpp \
+    DrawableGates/drawableoutputgate.cpp \
+    DrawableGates/drawablesandboxoutputgate.cpp \
     drawablewire.cpp \
-    drawablexorgate.cpp \
-    gate.cpp \
-    inputgate.cpp \
+    DrawableGates/drawablexorgate.cpp \
+    Gates/inputgate.cpp \
     interactivetutorialdialog.cpp \
     levelpicker.cpp \
     levelscreen.cpp \
     main.cpp \
     mainwindow.cpp \
-    nandgate.cpp \
-    norgate.cpp \
-    notgate.cpp \
-    orgate.cpp \
-    sandboxoutputgate.cpp \
+    Gates/nandgate.cpp \
+    Gates/norgate.cpp \
+    Gates/notgate.cpp \
+    Gates/orgate.cpp \
+    Gates/sandboxoutputgate.cpp \
     truthtable.cpp \
-    outputgate.cpp \
+    Gates/outputgate.cpp \
     wire.cpp\
     circuitcanvas.cpp\
-    drawableandgate.cpp\
-    drawablegate.cpp \
+    DrawableGates/drawableandgate.cpp\
+    DrawableGates/drawablegate.cpp \
     homescreen.cpp \
     leveltutorialdialog.cpp \
-    xorgate.cpp
+    Gates/xorgate.cpp
 
 HEADERS += \
     Box2D/Box2D.h \
@@ -138,38 +138,38 @@ HEADERS += \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
     GateTypes.h \
-    andgate.h \
+    Gates/andgate.h \
+    Gates/gate.h \
+    Gates/nandgate.h \
+    Gates/norgate.h \
+    Gates/notgate.h \
+    Gates/orgate.h \
+    Gates/outputgate.h \
+    Gates/xorgate.h \
     animationworld.h \
     circuitmodel.h \
-    drawableinputgate.h \
-    drawablenandgate.h \
-    drawablenorgate.h \
-    drawablenotgate.h \
-    drawableorgate.h \
-    drawableoutputgate.h \
-    drawablesandboxoutputgate.h \
+    DrawableGates/drawableinputgate.h \
+    DrawableGates/drawablenandgate.h \
+    DrawableGates/drawablenorgate.h \
+    DrawableGates/drawablenotgate.h \
+    DrawableGates/drawableorgate.h \
+    DrawableGates/drawableoutputgate.h \
+    DrawableGates/drawablesandboxoutputgate.h \
     drawablewire.h \
-    drawablexorgate.h \
-    gate.h \
-    inputgate.h \
+    DrawableGates/drawablexorgate.h \
+    Gates/inputgate.h \
     interactivetutorialdialog.h \
     levelpicker.h \
     levelscreen.h \
     leveltutorialdialog.h \
     mainwindow.h \
-    nandgate.h \
-    norgate.h \
-    notgate.h \
-    orgate.h \
-    sandboxoutputgate.h \
+    Gates/sandboxoutputgate.h \
     truthtable.h \
-    outputgate.h \
     wire.h\
     circuitcanvas.h\
-    drawableandgate.h\
-    drawablegate.h \
-    homescreen.h \
-    xorgate.h
+    DrawableGates/drawableandgate.h\
+    DrawableGates/drawablegate.h \
+    homescreen.h
 
 
 FORMS += \
