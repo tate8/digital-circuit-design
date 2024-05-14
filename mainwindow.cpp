@@ -26,10 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
     // This way we can switch between the level picker and the in-level screens
     QStackedLayout *stackedLayout = new QStackedLayout(centralWidget);
 
+    // Create a single AnimationWorld instance
+    AnimationWorld* world = new AnimationWorld(centralWidget->size().width(), centralWidget->size().height());
+
     // Create the screens
-    LevelPicker *levelPicker = new LevelPicker();
-    LevelScreen *inLevel = new LevelScreen();
-    HomeScreen *homeScreen = new HomeScreen(this);
+    LevelPicker* levelPicker = new LevelPicker(world);
+    LevelScreen* inLevel = new LevelScreen();
+    HomeScreen* homeScreen = new HomeScreen(this, world);
 
     // Add the screens to the stacked layout
     stackedLayout->addWidget(levelPicker);
@@ -45,12 +48,10 @@ MainWindow::MainWindow(QWidget *parent)
     stackedLayout->setCurrentWidget(homeScreen);
 
     // Logic to switch between screens
-    connect(levelPicker->ui->button, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(inLevel);
-        // Show the tutorial by default
-        // And
-        inLevel->showTutorialModal(1);
+    connect(levelPicker->ui->homeButton, &QPushButton::clicked, [=](){
+        stackedLayout->setCurrentWidget(homeScreen);
     });
+
 
     // level screen to home
     connect(inLevel->ui->homeButton, &QPushButton::clicked, [=](){
@@ -73,11 +74,6 @@ MainWindow::MainWindow(QWidget *parent)
         inLevel->prepareSandbox(1);
         inLevel->sandboxMode = 1;
         stackedLayout->setCurrentWidget(inLevel);
-    });
-
-    // level picker to home
-    connect(levelPicker->ui->homeButton, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(homeScreen);
     });
 
     // level screen to levelpicker
@@ -108,13 +104,13 @@ MainWindow::MainWindow(QWidget *parent)
         stackedLayout->setCurrentWidget(inLevel);
          inLevel->showTutorialModal(6);
     });
-    connect(levelPicker->ui->pushButton_7, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(inLevel);
-         inLevel->showTutorialModal(7);
-    });
-    connect(levelPicker->ui->pushButton_8, &QPushButton::clicked, [=](){
-        inLevel->showTutorialModal(8);
-    });
+    // connect(levelPicker->ui->pushButton_7, &QPushButton::clicked, [=](){
+    //     stackedLayout->setCurrentWidget(inLevel);
+    //      inLevel->showTutorialModal(7);
+    // });
+    // connect(levelPicker->ui->pushButton_8, &QPushButton::clicked, [=](){
+    //     inLevel->showTutorialModal(8);
+    // });
 }
 
 MainWindow::~MainWindow()

@@ -6,45 +6,26 @@
 #include "animationworld.h"
 #include <QPainter>
 
-HomeScreen::HomeScreen(MainWindow* window, QWidget *parent)
+HomeScreen::HomeScreen(MainWindow* window, AnimationWorld* world, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::HomeScreen)
-    , sandbox(window)
+    , world(world)
 {
 
     ui->setupUi(this);
 
-    // Initialize Animation World with the ui width and height dimensions
-    world = new AnimationWorld(size().width(), size().height());
     timer = new QTimer(this);
-
-    // Run the simulation while on the level-picker screen
-    connect(timer, &QTimer::timeout, this, &HomeScreen::updateAnimation);
+    connect(timer, &QTimer::timeout, this, [this](){
+        update();
+    });
     timer->start(30);
 
 }
-
-void HomeScreen::updateAnimation()
-{
-    world->simulateWorld();
-    update();
-}
-
 
 HomeScreen::~HomeScreen()
 {
     delete ui;
     delete timer;
-}
-
-void HomeScreen::openSandbox()
-{
-    stack.setCurrentWidget(sandbox);
-}
-
-void HomeScreen::openHomeMenu()
-{
-    stack.setCurrentWidget(this);
 }
 
 void HomeScreen::paintEvent(QPaintEvent *event)
@@ -80,7 +61,8 @@ void HomeScreen::paintEvent(QPaintEvent *event)
 
 void HomeScreen::resizeEvent(QResizeEvent *event)
 {
-    if (world) {
+    if (world)
+    {
         world->resizeWorld(size().width(), size().height());
     }
     QWidget::resizeEvent(event);

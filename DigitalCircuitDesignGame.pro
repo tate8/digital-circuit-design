@@ -86,7 +86,6 @@ SOURCES += \
     DrawableGates/drawableandgate.cpp\
     DrawableGates/drawablegate.cpp \
     homescreen.cpp \
-    leveltutorialdialog.cpp \
     Gates/xorgate.cpp
 
 HEADERS += \
@@ -161,7 +160,6 @@ HEADERS += \
     interactivetutorialdialog.h \
     levelpicker.h \
     levelscreen.h \
-    leveltutorialdialog.h \
     mainwindow.h \
     Gates/sandboxoutputgate.h \
     truthtable.h \
@@ -177,8 +175,7 @@ FORMS += \
     mainwindow.ui \
     homescreen.ui \
     levelpicker.ui \
-    levelscreen.ui \
-    leveltutorialdialog.ui
+    levelscreen.ui
 
 
 # Default rules for deployment.

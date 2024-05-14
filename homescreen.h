@@ -18,31 +18,16 @@ class HomeScreen : public QWidget
     Q_OBJECT
 
 public:
-    explicit HomeScreen(MainWindow *window, QWidget *parent = nullptr);
+    explicit HomeScreen(MainWindow* window, AnimationWorld* world, QWidget *parent = nullptr);
     ~HomeScreen();
     Ui::HomeScreen *ui;
 
 private:
-    /// @brief sandbox ui window
-    MainWindow* sandbox;
-
-    /// @brief stack that controls switching between ui windows
-    QStackedWidget stack;
-
     /// @brief Pointer to the animation world object.
     AnimationWorld* world;
 
     /// @brief Timer for the background animation.
-    QTimer *timer;
-
-public slots:
-    /// \brief openSandbox Changes the current screen to the sandbox window
-    void openSandbox();
-
-    /// \brief openHomeMenu Changes the current screen to the home window
-    void openHomeMenu();
-
-    void updateAnimation();
+    QTimer* timer;
 
 protected:
     /// @brief Handles painting bodies from the animation world into the ui frame.

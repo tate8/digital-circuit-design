@@ -52,14 +52,15 @@
    <property name="font">
     <font>
      <italic>false</italic>
-     <bold>true</bold>
+     <bold>false</bold>
+     <kerning>true</kerning>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>SANDBOX</string>
+    <string>Sandbox</string>
    </property>
   </widget>
   <widget class="QPushButton" name="levelsButton">
@@ -292,22 +293,22 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>LEVELS</string>
+    <string>Levels</string>
    </property>
   </widget>
   <widget class="QLabel" name="nameLabel">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>150</y>
-     <width>200</width>
-     <height>100</height>
+     <x>510</x>
+     <y>210</y>
+     <width>131</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>200</width>
-     <height>100</height>
+     <width>0</width>
+     <height>0</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -316,11 +317,16 @@
      <height>100</height>
     </size>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>24</pointsize>
+    </font>
+   </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>CIRCUIT CRAFT</string>
+    <string>Circuit Craft</string>
    </property>
   </widget>
  </widget>

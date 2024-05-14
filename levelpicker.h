@@ -23,17 +23,15 @@ class LevelPicker : public QWidget
     Q_OBJECT
 public:
     /// @brief Constructor that initializes the Level Picker window.
-    /// @param parent - the parent widget
-    explicit LevelPicker(QWidget *parent = nullptr);
+    /// @param world - The animation world
+    /// @param parent - The parent widget
+    explicit LevelPicker(AnimationWorld* world, QWidget *parent = nullptr);
 
     /// @brief Destructor to clean up resources.
     ~LevelPicker();
 
     /// @brief A pointer to the ui setup.
     Ui::LevelPicker *ui;
-public slots:
-    /// @brief Updates the world simulation in the ui window.
-    void updateAnimation();
 
 protected:
     /// @brief Handles painting bodies from the animation world into the ui frame.
@@ -46,9 +44,9 @@ protected:
 
 private:
     /// @brief Pointer to the animation world object.
-    AnimationWorld *world;
+    AnimationWorld* world;
 
     /// @brief Timer for the background animation.
-    QTimer *timer;
+    QTimer* timer;
 };
 #endif // LEVELPICKER_H

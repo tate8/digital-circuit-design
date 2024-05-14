@@ -3,7 +3,9 @@
 AnimationWorld::AnimationWorld(int initWidth, int initHeight)
     : width(initWidth), height(initHeight), gravity(0.0f, 0.5f), theWorld(new b2World(gravity))
 {
-
+    gatesTimer = new QTimer(this);
+    connect(gatesTimer, &QTimer::timeout, this, &AnimationWorld::simulateWorld);
+    gatesTimer->start(30);
 }
 
 AnimationWorld::AnimationWorld()

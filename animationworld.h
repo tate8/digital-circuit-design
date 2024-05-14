@@ -145,6 +145,9 @@ private:
     /// @brief Timer for confetti animation
     QTimer* confettiTimer = nullptr;
 
+    /// @brief Timer for gates animation
+    QTimer* gatesTimer = nullptr;
+
     /// @brief Map from body to its image resource string
     QMap<b2Body*, QString> bodyImageMap;
 };

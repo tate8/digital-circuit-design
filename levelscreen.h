@@ -9,7 +9,6 @@
 #include "truthtable.h"
 #include "wire.h"
 #include "circuitmodel.h"
-#include "leveltutorialdialog.h"
 #include "animationworld.h"
 
 /// @brief This class manages and displays the ui for the levels and tutorials.
@@ -39,9 +38,6 @@ public:
 
     /// @brief A pointer to the ui setup.
     Ui::LevelScreen *ui;
-
-    /// @brief Pointer to the level dialog ui.
-    Ui::LevelTutorialDialog *levelDialog;
 
     /// @brief Flag for the sandbox mode.
     bool sandboxMode = 0;

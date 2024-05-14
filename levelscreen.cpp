@@ -1,6 +1,5 @@
 #include "ui_leveltutorialdialog.h"
 #include "levelscreen.h"
-#include "leveltutorialdialog.h"
 #include "ui_levelscreen.h"
 #include "wire.h"
 #include "GateTypes.h"
@@ -12,7 +11,6 @@
 LevelScreen::LevelScreen(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LevelScreen)
-    , levelDialog(new Ui::LevelTutorialDialog)
     , model()
     , table(new TruthTable)
     , animation(new AnimationWorld())
@@ -131,12 +129,6 @@ void LevelScreen::showTutorialModal(int tutorial)
     QString descriptionText = getTutorialDescriptionText(tutorial);
 
     level = tutorial;
-
-    LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-    ui->norButton->show();
-    modal->ui->titleLabel->setText(titleText);
-    modal->ui->descriptionLabel->setText(descriptionText);
-    modal->exec();
 
     // Updates the truth table
     table->updateTableBasedOnLevel(tutorial);
