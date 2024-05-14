@@ -19,6 +19,11 @@ class AnimationWorld : public QObject
     Q_OBJECT
 
 public:
+    static constexpr float TIMESTEP = 1.0f / 150.0f;
+    static constexpr int VELOCITY_ITERATIONS = 8;
+    static constexpr int POSITION_ITERATIONS = 3;
+    static constexpr float BODY_MARGIN = 50.0f;
+
     /// @brief The Scale factor is used to convert between pixels and Box2D world
     /// coordinates. Pixels are converted to world coordinates by dividing by SCALE.
     /// The World coordinates are converted to pixel coordinates by multiplying by SCALE.
@@ -55,6 +60,10 @@ public:
     /// @brief Gets the confetti bodies as a pair. The body contains the information
     /// for the confetti, and each piece is generated with a color.
     QVector<QPair<b2Body*, QColor>> getConfettiBodies() const;
+
+    /// @brief Gets the image resource string corresponding to a body
+    /// @param body - The body whose image to get
+    QString getImageForBody(b2Body* body) const;
 
 public slots:
     /// @brief Creates confetti at x,y coords. based on the ui screen size.
@@ -103,7 +112,8 @@ private:
     /// @param restitution - body's bounciness
     /// @param angularVelocity - initial angular velocity in radians per second
     /// @param linearVelocity - initial linear velocity in pixels per second
-    void createBody(float posX, float posY, float boxSize, float density, float friction, float restitution, float angularVelocity, b2Vec2 linearVelocity);
+    /// @param initialAngle - initial angle
+    void createBody(float posX, float posY, float boxSize, float density, float friction, float restitution, float angularVelocity, b2Vec2 linearVelocity, float initialAngle);
 
     /// @brief Resets a body to a new random position near the top of the screen.
     /// @param pointer to the body to reset
@@ -136,6 +146,9 @@ private:
 
     /// @brief Timer for confetti animation
     QTimer* confettiTimer = nullptr;
+
+    /// @brief Map from body to its image resource string
+    QMap<b2Body*, QString> bodyImageMap;
 };
 
 #endif // ANIMATIONWORLD_H

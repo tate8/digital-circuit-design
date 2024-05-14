@@ -11,7 +11,6 @@ HomeScreen::HomeScreen(MainWindow* window, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::HomeScreen)
     , sandbox(window)
-    , help(new HelpScreen(parent))
 {
 
     ui->setupUi(this);
@@ -49,82 +48,34 @@ void HomeScreen::openHomeMenu()
     stack.setCurrentWidget(this);
 }
 
-void HomeScreen::openHelpScreen(){
-    stack.setCurrentWidget(help);
-
-    //displays a popup introducing the tutorial
-    QMessageBox::information(this, "Welcome to the tutorial!", "Click on the left-hand side gates to learn about the gates and their behaviors. click on the table. Solve the puzzles with the logic gates to match the truth table to pass the level!");
-}
-
 void HomeScreen::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
-    QPixmap andGate1(":/rainbowGates/andRed.png");
-    QPixmap andGate2(":/rainbowGates/andOrange.png");
-    QPixmap andGate3(":/rainbowGates/andYellow.png");
-    QPixmap andGate4(":/rainbowGates/andGreen.png");
-    QPixmap andGate5(":/rainbowGates/andBlue.png");
-    QPixmap andGate6(":/rainbowGates/andPurple.png");
-    QPixmap andGate7(":/rainbowGates/andPink.png");
-
-    QPixmap orGate1(":/rainbowGates/orRed.png");
-    QPixmap orGate2(":/rainbowGates/orOrange.png");
-    QPixmap orGate3(":/rainbowGates/orYellow.png");
-    QPixmap orGate4(":/rainbowGates/orGreen.png");
-    QPixmap orGate5(":/rainbowGates/orBlue.png");
-    QPixmap orGate6(":/rainbowGates/orPurple.png");
-    QPixmap orGate7(":/rainbowGates/orPink.png");
-
-    QPixmap notGate1(":/rainbowGates/notRed.png");
-    QPixmap notGate2(":/rainbowGates/notOrange.png");
-    QPixmap notGate3(":/rainbowGates/notYellow.png");
-    QPixmap notGate4(":/rainbowGates/notGreen.png");
-    QPixmap notGate5(":/rainbowGates/notBlue.png");
-    QPixmap notGate6(":/rainbowGates/notPurple.png");
-    QPixmap notGate7(":/rainbowGates/notPink.png");
-
     int gateWidth = 100; // Set the width for all gate images
-    QVector<QPixmap> gateImages = {
-        andGate1.scaledToWidth(gateWidth),
-        andGate2.scaledToWidth(gateWidth),
-        andGate3.scaledToWidth(gateWidth),
-        andGate4.scaledToWidth(gateWidth),
-        andGate5.scaledToWidth(gateWidth),
-        andGate6.scaledToWidth(gateWidth),
-        andGate7.scaledToWidth(gateWidth),
-        orGate1.scaledToWidth(gateWidth),
-        orGate2.scaledToWidth(gateWidth),
-        orGate3.scaledToWidth(gateWidth),
-        orGate4.scaledToWidth(gateWidth),
-        orGate5.scaledToWidth(gateWidth),
-        orGate6.scaledToWidth(gateWidth),
-        orGate7.scaledToWidth(gateWidth),
-        notGate1.scaledToWidth(gateWidth),
-        notGate2.scaledToWidth(gateWidth),
-        notGate3.scaledToWidth(gateWidth),
-        notGate4.scaledToWidth(gateWidth),
-        notGate5.scaledToWidth(gateWidth),
-        notGate6.scaledToWidth(gateWidth),
-        notGate7.scaledToWidth(gateWidth)
-    };
 
-    int i = 0;
     for (auto body : world->getBodies())
     {
+        // Get the position and angle of the body
         b2Vec2 position = body->GetPosition();
         float pixelX = position.x * world->SCALE;
         float pixelY = position.y * world->SCALE;
         float angle = body->GetAngle() * (180.0 / M_PI);
 
+        QString imageString = world->getImageForBody(body);
+        if (imageString.isEmpty()) {
+            continue; // Skip if invalid
+        }
+
+        QPixmap image(imageString);
+        image = image.scaledToWidth(gateWidth);
+
+        // Draw the selected gate image
         painter.save();
         painter.translate(pixelX, pixelY);
         painter.rotate(angle);
-        painter.drawPixmap(-gateImages[i].width() / 2, -gateImages[i].height() / 2, gateImages[i]);
+        painter.drawPixmap(-image.width() / 2, -image.height() / 2, image);
         painter.restore();
-
-        // Increment and wrap i
-        i = (i + 1) % gateImages.size();
     }
 }
 

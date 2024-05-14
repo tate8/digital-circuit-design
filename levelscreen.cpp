@@ -1,8 +1,6 @@
 #include "ui_leveltutorialdialog.h"
 #include "levelscreen.h"
 #include "leveltutorialdialog.h"
-#include "leveltutorialdialog2.h"
-#include "leveltutorialdialog3.h"
 #include "ui_levelscreen.h"
 #include "wire.h"
 #include "GateTypes.h"
@@ -33,31 +31,24 @@ LevelScreen::LevelScreen(QWidget *parent)
     connect(ui->infoButton, &QPushButton::clicked, this, &LevelScreen::showTutorialModal);
     connect(ui->andButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::AndGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->orButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::OrGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->notButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::NotGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->norButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::NorGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->xorButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::XorGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->nandButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::NandGateType);
-        ui->circuitCanvas->setFocus();
     });
     connect(ui->outputButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::SandboxOutputGateType);
-        ui->circuitCanvas->setFocus();
     });
 
     // Wires and Gates
@@ -139,82 +130,14 @@ void LevelScreen::showTutorialModal(int tutorial)
     QString titleText = getTutorialTitleText(tutorial);
     QString descriptionText = getTutorialDescriptionText(tutorial);
 
-    switch (tutorial)
-    {
-    case 1:
-    {
-        level = 1;
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        modal->exec();
-        break;
-    }
-    case 2:
-    {
-        level = 2;
-        LevelTutorialDialog2 *modal = new LevelTutorialDialog2(this);
-        modal->exec();
-        break;
-    }
-    case 3:
-    {
-        level = 3;
-        LevelTutorialDialog3 *modal = new LevelTutorialDialog3(this);
-        modal->exec();
-        break;
-    }
-    case 4:
-    {
-        level = 4;
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        modal->ui->titleLabel->setText(titleText);
-        modal->ui->descriptionLabel->setText(descriptionText);
-        modal->exec();
-        break;
-    }
-    case 5:
-    {
-        level = 5;
+    level = tutorial;
 
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        ui->norButton->show();
-        modal->ui->titleLabel->setText(titleText);
-        modal->ui->descriptionLabel->setText(descriptionText);
-        modal->exec();
-        break;
-    }
-    case 6:
-    {
-        level = 6;
+    LevelTutorialDialog *modal = new LevelTutorialDialog(this);
+    ui->norButton->show();
+    modal->ui->titleLabel->setText(titleText);
+    modal->ui->descriptionLabel->setText(descriptionText);
+    modal->exec();
 
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        modal->ui->titleLabel->setText(titleText);
-        modal->ui->descriptionLabel->setText(descriptionText);
-        modal->exec();
-        break;
-    }
-    case 7:
-    {
-        level = 7;
-
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        modal->ui->titleLabel->setText(titleText);
-        modal->ui->descriptionLabel->setText(descriptionText);
-        modal->exec();
-        break;
-    }
-    case 8:
-    {
-        level = 8;
-
-        LevelTutorialDialog *modal = new LevelTutorialDialog(this);
-        modal->ui->titleLabel->setText(titleText);
-        modal->ui->descriptionLabel->setText(descriptionText);
-        modal->exec();
-        break;
-    }
-    default:
-        break;
-    }
     // Updates the truth table
     table->updateTableBasedOnLevel(tutorial);
     ui->circuitCanvas->tutorialClosed();

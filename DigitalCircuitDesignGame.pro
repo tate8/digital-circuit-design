@@ -68,13 +68,10 @@ SOURCES += \
     drawablewire.cpp \
     drawablexorgate.cpp \
     gate.cpp \
-    helpscreen.cpp \
     inputgate.cpp \
     interactivetutorialdialog.cpp \
     levelpicker.cpp \
     levelscreen.cpp \
-    leveltutorialdialog2.cpp \
-    leveltutorialdialog3.cpp \
     main.cpp \
     mainwindow.cpp \
     nandgate.cpp \
@@ -159,8 +156,6 @@ HEADERS += \
     levelpicker.h \
     levelscreen.h \
     leveltutorialdialog.h \
-    leveltutorialdialog2.h \
-    leveltutorialdialog3.h \
     mainwindow.h \
     nandgate.h \
     norgate.h \
@@ -174,20 +169,16 @@ HEADERS += \
     drawableandgate.h\
     drawablegate.h \
     homescreen.h \
-    helpscreen.h \
     xorgate.h
 
 
 FORMS += \
-    helpscreen.ui \
     interactivetutorialdialog.ui \
     mainwindow.ui \
     homescreen.ui \
     levelpicker.ui \
     levelscreen.ui \
-    leveltutorialdialog.ui \
-    leveltutorialdialog2.ui \
-    leveltutorialdialog3.ui 
+    leveltutorialdialog.ui
 
 
 # Default rules for deployment.
@@ -196,7 +187,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Images.qrc
+    resources.qrc
 
 DISTFILES += \
     Box2D/Box2DConfig.cmake \

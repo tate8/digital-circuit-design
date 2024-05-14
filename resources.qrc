@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/styles">
+        <file>styles.qss</file>
+    </qresource>
+    <qresource prefix="/gates">
+        <file>homeButton.jpg</file>
+        <file>inputGateOff.png</file>
+        <file>inputGateOn.png</file>
+        <file>OutPutGateSpriteNoConnection.png</file>
+        <file>OutPutGateSpriteOff.png</file>
+        <file>OutPutGateSpriteOn.png</file>
+    </qresource>
+    <qresource prefix="/gatePorts">
+        <file>andGatePorts.png</file>
+        <file>orGatePorts.png</file>
+        <file>notGatePorts.png</file>
+        <file>nandGatePorts.png</file>
+        <file>norGatePorts.png</file>
+        <file>xorGatePorts.png</file>
+        <file>lightOff.png</file>
+        <file>lightOn.png</file>
+    </qresource>
+</RCC>

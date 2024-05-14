@@ -4,10 +4,10 @@
 /// CS3505 - Digital Circuit Design Game
 /// Reviewed by Jonathan Bodily
 
-#include "helpscreen.h"
 #include <QWidget>
 #include <mainwindow.h>
 #include <QStackedWidget>
+#include "animationworld.h"
 
 namespace Ui {
 class HomeScreen;
@@ -26,9 +26,6 @@ private:
     /// @brief sandbox ui window
     MainWindow* sandbox;
 
-    /// @brief help ui window
-    HelpScreen* help;
-
     /// @brief stack that controls switching between ui windows
     QStackedWidget stack;
 
@@ -44,9 +41,6 @@ public slots:
 
     /// \brief openHomeMenu Changes the current screen to the home window
     void openHomeMenu();
-
-    /// @brief openHelpScreen Changes the current screen to the help window
-    void openHelpScreen();
 
     void updateAnimation();
 

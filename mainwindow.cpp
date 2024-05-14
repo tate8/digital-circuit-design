@@ -1,7 +1,6 @@
 /// CS3505 - Digital Circuit Design Game
 /// Reviewed by Jonathan Bodily
 #include "mainwindow.h"
-#include "ui_helpscreen.h"
 #include "ui_homescreen.h"
 #include "ui_mainwindow.h"
 #include <QStackedLayout>
@@ -31,13 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
     LevelPicker *levelPicker = new LevelPicker();
     LevelScreen *inLevel = new LevelScreen();
     HomeScreen *homeScreen = new HomeScreen(this);
-    HelpScreen *helpScreen = new HelpScreen(this);
 
     // Add the screens to the stacked layout
     stackedLayout->addWidget(levelPicker);
     stackedLayout->addWidget(inLevel);
     stackedLayout->addWidget(homeScreen);
-    stackedLayout->addWidget(helpScreen);
 
     inLevel->ui->norButton->hide();
     inLevel->ui->xorButton->hide();
@@ -81,16 +78,6 @@ MainWindow::MainWindow(QWidget *parent)
     // level picker to home
     connect(levelPicker->ui->homeButton, &QPushButton::clicked, [=](){
         stackedLayout->setCurrentWidget(homeScreen);
-    });
-
-    // help screen to home
-    connect(helpScreen->ui->homeButton, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(homeScreen);
-    });
-
-    // home screen to help
-    connect(homeScreen->ui->helpButton, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(helpScreen);
     });
 
     // level screen to levelpicker
