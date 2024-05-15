@@ -31,7 +31,7 @@ public:
     ~LevelPicker();
 
     /// @brief A pointer to the ui setup.
-    Ui::LevelPicker *ui;
+    Ui::LevelPicker* ui;
 
 protected:
     /// @brief Handles painting bodies from the animation world into the ui frame.

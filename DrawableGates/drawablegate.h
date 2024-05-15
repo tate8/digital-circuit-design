@@ -1,52 +1,66 @@
-#include <QRect>
-#include <QPixmap>
-#include "Gates/gate.h"
-
-/// CS3505 - Digital Circuit Design Game
-/// Reviewed by Christina Cao
-
 #ifndef DRAWABLEGATE_H
 #define DRAWABLEGATE_H
 
-/// \brief The DrawableGate class is an abstract class that represents a drawable logic gate
-///
-/// This class is the base class for the various logic gates that will position, obtain input and output positions
-/// and set the gate's image.
-class DrawableGate
+#include <QGraphicsItem>
+#include <QPixmap>
+#include <QRect>
+#include <QObject>
+#include "Gates/gate.h"
+
+
+class DrawableGate : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
 private:
-    /// \brief gate a Gate pointer to this gate
+
+    /// @brief gate a Gate pointer to this gate
     Gate* gate;
 
-    /// \brief pos a QPoint object with the X,Y coordinates of this gate
-    QPoint pos;
+    /// @brief If user dragging
+    bool dragging;
+
+    /// @brief If user hovering near output pin
+    bool nearOutputPin;
 
 protected:
-    /// \brief getInputOffsetX Gets the offset value for the X position of the specified input port
-    /// \param input an int for which port to get the offset for
-    /// \return an int for the offset
+
+    /// @brief getInputOffsetX Gets the offset value for the X position of the specified input port
+    /// @param input an int for which port to get the offset for
+    /// @return an int for the offset
     virtual int getInputOffsetX(int input) = 0;
 
-    /// \brief getInputOffsetY Gets the offset value for the Y position of the specified input port
-    /// \param input an int for which port to get the offset for
-    /// \return an int for the offset
-    virtual int getInputOffsetY(int input)= 0;
+    /// @brief getInputOffsetY Gets the offset value for the Y position of the specified input port
+    /// @param input an int for which port to get the offset for
+    /// @return an int for the offset
+    virtual int getInputOffsetY(int input) = 0;
 
-    /// \brief getOutputOffsetX Gets the offset value for the X position of the specified output port
-    /// \return an int for the offset
+    /// @brief getOutputOffsetX Gets the offset value for the X position of the specified output port
+    /// @return an int for the offset
     virtual int getOutputOffsetX() = 0;
 
-    /// \brief getOutputOffsetY Gets the offset value for the Y position of the specified output port
-    /// \return an int for the offset
+    /// @brief getOutputOffsetY Gets the offset value for the Y position of the specified output port
+    /// @return an int for the offset
     virtual int getOutputOffsetY() = 0;
-
 public:
-    DrawableGate(Gate* gate);
-    virtual ~DrawableGate() {}
+    explicit DrawableGate(Gate* gate, QGraphicsItem* parent = nullptr);
 
-    /// \brief getPos Gets the cucrrent positions of this gate
-    /// \return a QPoint object with the X,Y coordinates of this gate
-    QPoint getPos();
+    /// @brief Gets the bounding rect
+    QRectF boundingRect() const override;
+
+    /// @brief Paints the gate
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+
+    /// @brief Signals to draw a placeholder wire if the press was close enough
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /// @brief Signals to update the position of the wire placeholder
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /// @brief Signals to stop drawing the placehodler wire and possible connect
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /// @brief Qt method to listen to item moves
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     /// \brief setPos Sets the cucrrent positions of this gate
     /// \param x an int for the x positions
@@ -56,15 +70,15 @@ public:
     /// \brief getInputPos Gets the input position of the specified port
     /// \param input an int for the ID of the port
     /// \return a QPoint object of the X,Y position of the port
-    QPoint getInputPos(int input);
+    QPointF getInputPos(int input);
 
     /// \brief getOutputPos Gets the output position of the port
     /// \return a QPoint object of the X,Y position of the port
-    QPoint getOutputPos();
+    QPointF getOutputPos();
 
     /// \brief getBounds Gets the bounds of this gate
     /// \return a QSize object with the bounds
-    virtual QSize getBounds() = 0;
+    virtual QSize getBounds() const = 0;
 
     /// \brief getImage Gets the image for this gate
     /// \return a QPixmap object with the image
@@ -74,6 +88,25 @@ public:
     /// \return and int with the number of ports
     virtual int getNumInputs() = 0;
 
+    /// @brief Gets the gate
     Gate* getGate();
+
+signals:
+    /// @brief Emitted when the user is starting to draw a wire
+    /// @param startGate - The starting gate
+    /// @param point - The point drawing from
+    void startDrawingWire(Gate* startGate, QPointF point);
+
+    /// @brief Emitted when the user is dragging a wire
+    /// @param point - The point
+    void updateDrawingWire(QPointF point);
+
+    /// @brief Emitted when the user is ending drawing a wire
+    /// @param point - The point
+    void endDrawingWire(QPointF point);
+
+    /// @brief Emitted when the position changes
+    void positionChanged();
 };
+
 #endif // DRAWABLEGATE_H

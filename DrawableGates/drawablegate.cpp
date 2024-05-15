@@ -1,33 +1,97 @@
 #include <QRect>
 #include <QPixmap>
 #include "DrawableGates/drawablegate.h"
+#include <QPainter>
+#include <QSizeF>
+#include <QRectF>
+#include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
+#include <QObject>
 
-DrawableGate::DrawableGate(Gate* gate)
+DrawableGate::DrawableGate(Gate* gate, QGraphicsItem* parent)
+    : QObject(nullptr), QGraphicsItem(parent), gate(gate)
 {
-    this->gate = gate;
+    setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    setAcceptHoverEvents(true);
 }
 
-QPoint DrawableGate::getPos()
+QRectF DrawableGate::boundingRect() const
 {
-    return pos;
+    return QRectF(0, 0, getBounds().width(), getBounds().height());
 }
 
-void DrawableGate::setPos(int x, int y)
+void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    pos = QPoint(x, y);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+    QPixmap pixmap = getImage();
+    painter->drawPixmap(0, 0, pixmap);
 }
 
-QPoint DrawableGate::getInputPos(int input)
+void DrawableGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    return QPoint(pos.x() + this->getInputOffsetX(input), pos.y() + this->getInputOffsetY(input));
+    QPointF localPos = event->pos();
+    QPointF outputPos = QPointF(getOutputOffsetX(), getOutputOffsetY());
+    // Check if click is near the output pin
+    if ((localPos - outputPos).manhattanLength() < 10)
+    {
+        dragging = true;
+        QGraphicsItem::mousePressEvent(event);
+        emit startDrawingWire(getGate(), mapToScene(outputPos));
+    } else
+    {
+        QGraphicsItem::mousePressEvent(event);
+    }
 }
 
-QPoint DrawableGate::getOutputPos()
+void DrawableGate::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    return QPoint(pos.x() + this->getOutputOffsetX(), pos.y() + this->getOutputOffsetY());
+    if (dragging)
+    {
+        emit updateDrawingWire(mapToScene(event->pos()));
+    }
+    else
+    {
+        QGraphicsItem::mouseMoveEvent(event);
+    }
 }
 
-Gate* DrawableGate::getGate()
+void DrawableGate::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    if (dragging)
+    {
+        emit endDrawingWire(mapToScene(event->pos()));
+        dragging = false;
+    }
+    else
+    {
+        QGraphicsItem::mouseReleaseEvent(event);
+    }
+}
+
+QVariant DrawableGate::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemPositionHasChanged)
+    {
+        emit positionChanged();
+    }
+    return QGraphicsItem::itemChange(change, value);
+}
+
+QPointF DrawableGate::getInputPos(int input)
+{
+    QPointF localPos = QPointF(getInputOffsetX(input), getInputOffsetY(input));
+    return mapToScene(localPos);
+}
+
+QPointF DrawableGate::getOutputPos()
+{
+    QPointF localPos = QPointF(getOutputOffsetX(), getOutputOffsetY());
+    return mapToScene(localPos);
+}
+
+Gate* DrawableGate::getGate() {
     return gate;
 }

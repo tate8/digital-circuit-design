@@ -29,23 +29,11 @@ public:
     /// @brief Destructor to clean up resources.
     ~LevelScreen();
 
-    /// @brief Shows the chosen tutorial modal
-    /// @param Int determines which tutorial to show
-    void showTutorialModal(int tutorial);
-
-    /// @brief Shows tutorial modal based on level
-    void showTutorialBasedOnLevel();
-
     /// @brief A pointer to the ui setup.
     Ui::LevelScreen *ui;
 
     /// @brief Flag for the sandbox mode.
     bool sandboxMode = 0;
-
-    /// @brief Updates the circuit canvas when gates and wires are added/changed.
-    /// @param gates - the gates that are added to the canvas
-    /// @param wires - the wires that are added to the canvas
-    void updateCircuitCanvas(QList<Gate*> gates, QList<Wire*> wires);
 
     /// @brief A reference to the circuit model.
     CircuitModel model;
@@ -89,16 +77,6 @@ public slots:
 protected:
     /// @brief Triggers the paintEvent to redraw the screen.
     void paintEvent(QPaintEvent *event) override;
-
-private:
-    /// @brief Gets the current tutorial title.
-    QString getTutorialTitleText(int tutorial);
-
-    /// @brief Gets the tutorial description text from a specified tutorial.
-    QString getTutorialDescriptionText(int tutorial);
-
-    /// @brief keeps track of the current level.
-    int level;
 };
 
 #endif // LEVELSCREEN_H

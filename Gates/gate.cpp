@@ -13,6 +13,11 @@ Gate::Gate(QObject* parent, GateType type) :
     id = nextId++;
 }
 
+Gate::~Gate()
+{
+    emit removed();
+}
+
 void Gate::setOutputState(bool state)
 {
     if (outputState != state)

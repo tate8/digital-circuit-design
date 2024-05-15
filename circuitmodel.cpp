@@ -61,28 +61,6 @@ bool CircuitModel::simulateCircuit(bool value1, bool value2)
     return result;
 }
 
-bool CircuitModel::simulateNotGate(bool inputValue)
-{
-    if (!inputGate1 || !outputGate)
-    {
-        return false;
-    }
-
-    // Keep track of the previous value to restore
-    bool prevInputValue = inputGate1->getOutputState();
-
-    // Set new output for the input
-    inputGate1->setOutputState(inputValue);
-
-    // Get the result
-    bool result = outputGate->getOutputState();
-
-    // Set input back to normal
-    inputGate1->setOutputState(prevInputValue);
-
-    return result;
-}
-
 void CircuitModel::changeInputGateValue(bool shouldChangeFirstGate, bool newValue)
 {
     if (shouldChangeFirstGate)
@@ -93,8 +71,6 @@ void CircuitModel::changeInputGateValue(bool shouldChangeFirstGate, bool newValu
     {
         inputGate2->setOutputState(newValue);
     }
-
-    emit circuitChanged(gates, wires);
 }
 
 void CircuitModel::run(const QVector<bool>& expected)
@@ -108,25 +84,6 @@ void CircuitModel::run(const QVector<bool>& expected)
         bool input2 = i & 1;
 
         bool result = simulateCircuit(input1, input2);
-
-        if (result != expected[i])
-        {
-            emit runFailure();
-            return;
-        }
-    }
-
-    emit runSuccess();
-}
-
-void CircuitModel::runNot(const QVector<bool>& expected)
-{
-    // 0, 1
-    for (int i = 0; i < 2; i++)
-    {
-        bool input = i; // 0 or 1
-
-        bool result = simulateNotGate(input);
 
         if (result != expected[i])
         {
@@ -155,13 +112,24 @@ void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port
         return;
     }
 
+    // Create new wire
     Wire* newWire = new Wire(outputGate, inputGate, port);
-    wires.append(newWire);
 
-    emit circuitChanged(gates, wires);
+    // When wire changes, send signal
+    connect(newWire, &Wire::updated, this, [this, newWire](){
+        emit wireUpdated(newWire);
+    });
+
+    // When wire dies, send signal
+    connect(newWire, &Wire::removed, this, [this, newWire](){
+        emit wireRemoved(newWire);
+    });
+
+    wires.append(newWire);
+    emit wireAdded(newWire);
 }
 
-void CircuitModel::prepareLevel()
+void CircuitModel::reset()
 {
     // Set inputs to default value
     inputGate1->setOutputState(0);
@@ -177,30 +145,14 @@ void CircuitModel::prepareLevel()
     // Remove all gates but the input and output gates
     gates.removeIf([](Gate* gate)
     {
-        return gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
-    });
-
-    emit circuitChanged(gates, wires);
-}
-
-void CircuitModel::removeWireConnection(int wireId)
-{
-    // Find the wire to remove
-    Wire* wireToRemove;
-    for (auto wire : wires)
-    {
-        if (wire->id == wireId)
+        bool shouldRemove = gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
+        if (shouldRemove)
         {
-            wireToRemove = wire;
-            break;
+            delete gate;
         }
-    }
 
-    wires.removeOne(wireToRemove);
-    wireToRemove->onInputChanged(false);
-
-    emit circuitChanged(gates, wires);
-    delete wireToRemove;
+        return shouldRemove;
+    });
 }
 
 Gate* CircuitModel::addGate(GateType gateType)
@@ -241,9 +193,18 @@ Gate* CircuitModel::addGate(GateType gateType)
         return nullptr;
     }
 
-    gates.append(newGate);
+    // When gate changes, send signal
+    connect(newGate, &Gate::outputChanged, this, [this, newGate](){
+        emit gateUpdated(newGate);
+    });
 
-    emit circuitChanged(gates, wires);
+    // When gate dies, send signal
+    connect(newGate, &Gate::removed, this, [this, newGate](){
+        emit gateRemoved(newGate);
+    });
+
+    gates.append(newGate);
+    emit gateAdded(newGate);
     return newGate;
 }
 
@@ -270,7 +231,7 @@ void CircuitModel::removeGateAndConnections(Gate* gate)
     }
 
     gates.removeOne(gate);
-    emit circuitChanged(gates, wires);
+    delete gate;
 }
 
 void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inputPort)
@@ -289,6 +250,23 @@ void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inpu
             break;
         }
     }
+}
 
-    emit circuitChanged(gates, wires);
+void CircuitModel::removeWireConnection(int wireId)
+{
+    // Find the wire to remove
+    Wire* wireToRemove;
+    for (auto wire : wires)
+    {
+        if (wire->id == wireId)
+        {
+            wireToRemove = wire;
+            break;
+        }
+    }
+
+    wires.removeOne(wireToRemove);
+    wireToRemove->onInputChanged(false);
+
+    delete wireToRemove;
 }

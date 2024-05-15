@@ -38,11 +38,25 @@ public:
     /// @brief Identifies which input port of the gate this wire is connected to
     int inputPort;
 
+    /// @brief Gets the value of the wire
+    bool getValue();
+
+private:
+    /// @brief The value of the wire
+    bool value;
+
 public slots:
     /// @brief Called when the start gate's input changes.
     /// Sets the correct input port of the end gate to a specific value
     /// @param newState - The new value
     void onInputChanged(bool newState);
+
+signals:
+    /// @brief Emitted when the wire is detroyed
+    void removed();
+
+    /// @brief Emitted when the wire's value changes
+    void updated();
 };
 
 #endif

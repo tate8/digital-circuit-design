@@ -2,48 +2,44 @@
 #include "Gates/andgate.h"
 #include <QPixmap>
 
-DrawableAndGate::DrawableAndGate(AndGate* gate) : DrawableGate(gate)
-{
+constexpr int HEIGHT = 60;
+
+DrawableAndGate::DrawableAndGate(AndGate* gate) : DrawableGate(gate) {}
+
+int DrawableAndGate::getInputOffsetX(int input) {
+    return 5;
 }
 
-int DrawableAndGate::getInputOffsetX(int input)
-{
-    return 0;
-}
-
-int DrawableAndGate::getInputOffsetY(int input)
-{
-    if (input == 0)
-    {
-        return 13;
-    } else if (input == 1)
-    {
-        return 52;
+int DrawableAndGate::getInputOffsetY(int input) {
+    if(input == 0) {
+        return HEIGHT * 0.2;
     }
+    else if(input == 1) {
+        return HEIGHT * 0.8;
+    }
+
     return 0;
 }
 
-int DrawableAndGate::getOutputOffsetX()
-{
-    return 120;
+int DrawableAndGate::getOutputOffsetX() {
+    QPixmap pixmap = QPixmap(":/gatePorts/andGatePorts.png");
+    int width = pixmap.width() * HEIGHT / pixmap.height();
+    return width - 5;
 }
 
-int DrawableAndGate::getOutputOffsetY()
-{
-    return 33;
+int DrawableAndGate::getOutputOffsetY() {
+    return 30;
 }
 
-QPixmap DrawableAndGate::getImage()
-{
-    return QPixmap(":/gatePorts/andGatePorts.png").scaled(120, 120);
+QPixmap DrawableAndGate::getImage() {
+    return QPixmap(":/gatePorts/andGatePorts.png").scaledToHeight(HEIGHT, Qt::SmoothTransformation);
 }
 
-QSize DrawableAndGate::getBounds()
-{
-   return QSize(120, 65);
-}
+QSize DrawableAndGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/andGatePorts.png");
+    int width = pixmap.width() * HEIGHT / pixmap.height();
+    return QSize(width, HEIGHT);}
 
-int DrawableAndGate::getNumInputs()
-{
+int DrawableAndGate::getNumInputs() {
     return 2;
 }

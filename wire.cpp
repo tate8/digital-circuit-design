@@ -31,9 +31,19 @@ Wire::~Wire()
     {
         endGate->removeInput(inputPort);
     }
+
+    emit removed();
 }
 
 void Wire::onInputChanged(bool newState)
 {
+    value = newState;
     endGate->setInputPortState(inputPort, newState);
+
+    emit updated();
+}
+
+bool Wire::getValue()
+{
+    return value;
 }

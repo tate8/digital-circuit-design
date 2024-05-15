@@ -21,6 +21,8 @@ public:
     /// @param type - The type of the new gate
     Gate(QObject* parent = nullptr, GateType type = GateType::GenericGateType);
 
+    ~Gate();
+
     /// @brief Overridable method to calculate the output.
     /// Will depend on what type of gate it is
     virtual void calculateOutput() = 0;
@@ -67,6 +69,9 @@ signals:
     /// @brief Emitted when the current output changes
     /// @param newOutput - The new output
     void outputChanged(bool newOutput);
+
+    /// @brief Emitted when the gate is destroyed
+    void removed();
 
 public slots:
     /// @brief Slot for when an input has changed
