@@ -47,11 +47,6 @@ public:
     /// @brief Flag to notify if the user circuit was completed successfully.
     bool runWasSuccessful = false;
 
-    /// @brief Updates the current truth table.
-    /// @param tableHeader - Displays the table boolean equation as text.
-    /// @param data - contains the correct sequence
-    void updateTruthTableUI(QString tableHeader, const QVector<QVector<QString>>& data);
-
     /// @brief When the run button is clicked, this gets the
     /// current truth table to compare with the circuit sequence.
     void runButtonClicked();

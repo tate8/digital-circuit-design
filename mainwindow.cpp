@@ -81,11 +81,6 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
-    // level screen to levelpicker
-    connect(inLevel->ui->levelsButton, &QPushButton::clicked, [=](){
-        stackedLayout->setCurrentWidget(levelPicker);
-    });
-
 }
 
 MainWindow::~MainWindow()

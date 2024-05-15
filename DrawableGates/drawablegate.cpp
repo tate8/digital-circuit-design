@@ -28,12 +28,21 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
     Q_UNUSED(widget);
     QPixmap pixmap = getImage();
     painter->drawPixmap(0, 0, pixmap);
+
+    // Draw a box around the item if it is selected
+    if (isSelected()) {
+        QPen pen(Qt::gray, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
+        pen.setDashOffset(10);
+        painter->setPen(pen);
+        painter->drawRect(boundingRect());
+    }
 }
 
 void DrawableGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QPointF localPos = event->pos();
-    QPointF outputPos = QPointF(getOutputOffsetX(), getOutputOffsetY());
+    QPointF outputPos = getOutputOffset();
+
     // Check if click is near the output pin
     if ((localPos - outputPos).manhattanLength() < 10)
     {
@@ -82,14 +91,12 @@ QVariant DrawableGate::itemChange(GraphicsItemChange change, const QVariant &val
 
 QPointF DrawableGate::getInputPos(int input)
 {
-    QPointF localPos = QPointF(getInputOffsetX(input), getInputOffsetY(input));
-    return mapToScene(localPos);
+    return mapToScene(getInputOffset(input));
 }
 
 QPointF DrawableGate::getOutputPos()
 {
-    QPointF localPos = QPointF(getOutputOffsetX(), getOutputOffsetY());
-    return mapToScene(localPos);
+    return mapToScene(getOutputOffset());
 }
 
 Gate* DrawableGate::getGate() {

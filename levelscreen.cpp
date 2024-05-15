@@ -1,3 +1,4 @@
+#include "QtWidgets/qheaderview.h"
 #include "ui_leveltutorialdialog.h"
 #include "levelscreen.h"
 #include "ui_levelscreen.h"
@@ -16,14 +17,6 @@ LevelScreen::LevelScreen(QWidget *parent)
     , animation(new AnimationWorld())
 {
     ui->setupUi(this);
-
-    // Hide the row header in table
-    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget->verticalHeader()->setVisible(false);
-
-    // Make columns fill available space
-    QHeaderView* header = ui->tableWidget->horizontalHeader();
-    header->setSectionResizeMode(QHeaderView::Stretch);
 
     // Tutorial modals
     connect(ui->andButton, &QPushButton::clicked, &model, [this](){
@@ -96,49 +89,21 @@ void LevelScreen::prepareSandbox(bool mode)
     // setup level to sandbox mode
     if(mode == 1)
     {
-        ui->tableFrame->hide();
         ui->button_3->hide();
         ui->norButton->show();
         ui->xorButton->show();
         ui->nandButton->show();
         ui->outputButton->show();
-        ui->levelsButton->hide();
     }
     // reset screen to level mode
     else
     {
-        ui->tableFrame->show();
         ui->button_3->show();
         ui->norButton->hide();
         ui->xorButton->hide();
         ui->nandButton->hide();
         ui->outputButton->hide();
-         ui->levelsButton->show();
 
-    }
-}
-
-void LevelScreen::updateTruthTableUI(QString tableHeader, const QVector<QVector<QString>> &data)
-{
-    ui->truthTableHeaderLabel->clear();
-    ui->truthTableHeaderLabel->setText(tableHeader);
-    ui->tableWidget->setRowCount(4);
-    int columnCount = data.isEmpty() ? 0 : data[0].size();
-    ui->tableWidget->setColumnCount(columnCount);
-
-    // Sets the column names
-    QStringList columnHeaders;
-    columnHeaders << "Input A" << "Input B" << "Output Q";
-    ui->tableWidget->setHorizontalHeaderLabels(columnHeaders);
-
-    // Populate the table with new data
-    for (int row = 0; row < data.size(); ++row)
-    {
-        for (int col = 0; col < data[row].size(); ++col)
-        {
-            QTableWidgetItem* item = new QTableWidgetItem(data[row][col]);
-            ui->tableWidget->setItem(row, col, item);
-        }
     }
 }
 
@@ -173,22 +138,6 @@ void LevelScreen::paintEvent(QPaintEvent *event)
 
 void LevelScreen::startConfetti()
 {
-    ui->truthTableHeaderLabel->setText("Circuit CORRECT!");
-    ui->truthTableHeaderLabel->setStyleSheet(
-        "border-style: solid;"
-        "border-width: 5px 5px 3px 5px;"
-        "border-color: #2A7F46;"
-        "border-top-left-radius: 3px;"
-        "border-top-right-radius: 3px;"
-        "border-bottom-left-radius: 0px;"
-        "border-bottom-right-radius: 0px;"
-        "background-color: #34A853;"
-        "color: white;"
-        "font: bold 18px;"
-        "padding: 5px;"
-        "min-width: 50px;"
-        "min-height: 30px;"
-        );
     this->runWasSuccessful = true;
     int centerX = this->width() / 2;
     int centerY = this->height();

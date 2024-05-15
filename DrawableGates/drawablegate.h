@@ -23,24 +23,14 @@ private:
     bool nearOutputPin;
 
 protected:
-
-    /// @brief getInputOffsetX Gets the offset value for the X position of the specified input port
+    /// @brief Gets the offset value for the position of the specified input port
     /// @param input an int for which port to get the offset for
-    /// @return an int for the offset
-    virtual int getInputOffsetX(int input) = 0;
+    /// @return an point for the offset
+    virtual QPointF getInputOffset(int input) = 0;
 
-    /// @brief getInputOffsetY Gets the offset value for the Y position of the specified input port
-    /// @param input an int for which port to get the offset for
-    /// @return an int for the offset
-    virtual int getInputOffsetY(int input) = 0;
-
-    /// @brief getOutputOffsetX Gets the offset value for the X position of the specified output port
-    /// @return an int for the offset
-    virtual int getOutputOffsetX() = 0;
-
-    /// @brief getOutputOffsetY Gets the offset value for the Y position of the specified output port
-    /// @return an int for the offset
-    virtual int getOutputOffsetY() = 0;
+    /// @brief Gets the offset value for the position of the specified output port
+    /// @return an point for the offset
+    virtual QPointF getOutputOffset() = 0;
 public:
     explicit DrawableGate(Gate* gate, QGraphicsItem* parent = nullptr);
 
