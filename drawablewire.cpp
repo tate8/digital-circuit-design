@@ -1,9 +1,14 @@
 #include "drawablewire.h"
 #include <QPainter>
+#include <QPainterPath>
+#include <QGraphicsSceneHoverEvent>
+#include <QKeyEvent>
 
 DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent)
     : QObject(nullptr), QGraphicsItem(parent), wire(wire), startGate(start), endGate(end)
 {
+    setAcceptHoverEvents(true);
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
 
     connect(startGate, &DrawableGate::positionChanged, this, [this](){
         updatePositions();
@@ -51,9 +56,32 @@ void DrawableWire::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
     int wireWidth = 3;
 
-    QPen pen(Qt::black);
-    pen.setWidth(wireWidth);
+    QPen pen (Qt::black, wireWidth);
     painter->setPen(pen);
+    painter->setOpacity(1.0);
 
     painter->drawLine(mapFromScene(startPoint), mapFromScene(endPoint));
+
+    if (isSelected()) {
+        QPen pen(Qt::gray, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
+        pen.setDashOffset(10);
+        painter->setPen(pen);
+        painter->drawRect(boundingRect());
+    }
+}
+
+void DrawableWire::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete)
+    {
+        emit deleteRequested(wire->id);
+    } else {
+        QGraphicsItem::keyPressEvent(event);
+    }
+}
+
+void DrawableWire::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    setFocus();
+    QGraphicsItem::mousePressEvent(event);
 }

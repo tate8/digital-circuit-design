@@ -69,7 +69,7 @@ LevelScreen::LevelScreen(QWidget *parent)
     // Updating the model based on Circuit Canvas
     connect(ui->circuitCanvas, &CircuitCanvas::requestedConnection, &model, &CircuitModel::addWireConnection);
     connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteGate, &model, &CircuitModel::removeGateAndConnections);
-    connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteWire, &model, qOverload<Gate*, Gate*, int>(&CircuitModel::removeWireConnection));
+    connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteWire, &model, qOverload<int>(&CircuitModel::removeWireConnection));
     connect(ui->circuitCanvas, &CircuitCanvas::requestedChangeInput, &model, &CircuitModel::changeInputGateValue);
     connect(this, &LevelScreen::prepareLevel, &model, [this](){
         // Reset model state

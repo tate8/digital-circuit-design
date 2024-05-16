@@ -31,7 +31,7 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
     // Draw a box around the item if it is selected
     if (isSelected()) {
-        QPen pen(Qt::gray, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
+        QPen pen(Qt::lightGray, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);
         pen.setDashOffset(10);
         painter->setPen(pen);
         painter->drawRect(boundingRect());

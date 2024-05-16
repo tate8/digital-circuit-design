@@ -47,6 +47,14 @@ private:
     /// @param gate - The gate to disconnect
     void removeWireDrawingConnections(DrawableGate* gate);
 
+    /// @brief Connects for interacting with wires
+    /// @param wire - The wire to connect
+    void addWireInteractionConnections(DrawableWire* wire);
+
+    /// @brief Disconnects for interacting with wires
+    /// @param wire - The wire to disconnect
+    void removeWireInteractionConnections(DrawableWire* wire);
+
     /// @brief Gets which gate, if any is at the specified scene position
     /// @param scenePos - The position to check for gates
     DrawableGate* getGateAtPosition(QPointF& scenePos);
@@ -65,6 +73,10 @@ public slots:
     /// @param end - The point to end drawing at
     void endDrawingWire(QPointF end);
 
+    /// @brief Emits a request to delete the wire
+    /// @param wireId - The id of the wire to delete
+    void requestDeleteWire(int wireId);
+
 signals:
     /// @brief requestedConnection Signals for a new connection between the two gates to be created
     /// @param startGate a Gate where the connection originates
@@ -77,10 +89,8 @@ signals:
     void requestedDeleteGate(Gate* gate);
 
     /// @brief requestedDeleteWire Signals for the wire connected to these 2 gates to be deleted
-    /// @param startGate a Gate from which the wire is coming
-    /// @param endGate a Gate in which the wire ends
-    /// @param inputPort int the port from which the wire is originating
-    void requestedDeleteWire(Gate* startGate, Gate* endGate, int inputPort);
+    /// @param wireId - The id of the wire to delete
+    void requestedDeleteWire(int wireId);
 
     /// @brief Emitted when a input is changed
     /// @param changeFirstGate - If the first gate should be changed, otherwise the second

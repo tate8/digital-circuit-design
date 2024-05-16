@@ -44,6 +44,7 @@ void CircuitCanvas::updateDrawableGate(Gate* gate)
 void CircuitCanvas::addDrawableWire(Wire* wire)
 {
     DrawableWire* drawableWire = new DrawableWire(wire, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
+    addWireInteractionConnections(drawableWire);
     scene->addItem(drawableWire);
     wireMap.insert(wire, drawableWire);
 }
@@ -53,6 +54,7 @@ void CircuitCanvas::removeDrawableWire(Wire* wire)
     DrawableWire* drawableWire = wireMap.value(wire);
     if (drawableWire)
     {
+        removeWireInteractionConnections(drawableWire);
         scene->removeItem(drawableWire);
         delete drawableWire;
         wireMap.remove(wire);
@@ -93,6 +95,16 @@ void CircuitCanvas::removeWireDrawingConnections(DrawableGate* gate)
     disconnect(gate, &DrawableGate::startDrawingWire, this, &CircuitCanvas::startDrawingWire);
     disconnect(gate, &DrawableGate::updateDrawingWire, this, &CircuitCanvas::updateDrawingWire);
     disconnect(gate, &DrawableGate::endDrawingWire, this, &CircuitCanvas::endDrawingWire);
+}
+
+void CircuitCanvas::addWireInteractionConnections(DrawableWire* wire)
+{
+    connect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
+}
+
+void CircuitCanvas::removeWireInteractionConnections(DrawableWire* wire)
+{
+    disconnect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
 }
 
 void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
@@ -148,4 +160,9 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
     scene->removeItem(currentWire);
     delete currentWire;
     currentWire = nullptr;
+}
+
+void CircuitCanvas::requestDeleteWire(int wireId)
+{
+    emit requestedDeleteWire(wireId);
 }

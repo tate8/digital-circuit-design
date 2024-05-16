@@ -15,13 +15,19 @@ public:
     /// @brief Gets the bounding rect
     QRectF boundingRect() const override;
 
-    /// @brief Paints the wire
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-
     /// @brief Updates the start and end positions based on the wire's gates
     void updatePositions();
 
 private:
+    /// @brief Paints the wire
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+    /// @brief Listens for backspace key press to send delete signal
+    void keyPressEvent(QKeyEvent* event) override;
+
+    /// @brief Focuses wire on press
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
     /// @brief The model's wire
     Wire* wire;
 
@@ -36,6 +42,14 @@ private:
 
     /// @brief The end point
     QPointF endPoint;
+
+    /// @brief If the user is hovering over the wire
+    bool isHovering;
+
+signals:
+    /// @brief Emitted when user wants to delete this wire
+    /// @param wireId - The real wire's id
+    void deleteRequested(int wireId);
 };
 
 #endif // DRAWABLEWIRE_H
