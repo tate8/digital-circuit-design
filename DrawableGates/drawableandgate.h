@@ -2,16 +2,16 @@
 #define DRAWABLEANDGATE_H
 
 #include "DrawableGates/drawablegate.h"
-#include "Gates/andgate.h"
+#include "Gates/gate.h"
 
 class DrawableAndGate : public DrawableGate
 {
 protected:
-    QPointF getInputOffset(int input) override;
-    QPointF getOutputOffset() override;
+    virtual QPointF getInputOffset(int input) override;
+    virtual QPointF getOutputOffset() override;
 
 public:
-    DrawableAndGate(AndGate* gate);
+    DrawableAndGate(Gate* gate);
     virtual QSize getBounds() const override;
     virtual QPixmap getImage() override;
     virtual int getNumInputs() override;

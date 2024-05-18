@@ -1,11 +1,11 @@
 #include "DrawableGates/drawableandgate.h"
-#include "Gates/andgate.h"
+#include "Gates/gate.h"
 #include <QPixmap>
 #include <QPointF>
 
 constexpr int HEIGHT = 60;
 
-DrawableAndGate::DrawableAndGate(AndGate* gate) : DrawableGate(gate) {}
+DrawableAndGate::DrawableAndGate(Gate* gate) : DrawableGate(gate) {}
 
 QPointF DrawableAndGate::getInputOffset(int input) {
     if (input == 0) {

@@ -46,6 +46,11 @@ private:
     /// @brief If the user is hovering over the wire
     bool isHovering;
 
+public slots:
+    /// @brief Emits the deleteRequested signal
+    /// Used when an action needs to delete this wire if it is selected
+    void requestDeleteIfSelected();
+
 signals:
     /// @brief Emitted when user wants to delete this wire
     /// @param wireId - The real wire's id

@@ -8,7 +8,7 @@ DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, Q
     : QObject(nullptr), QGraphicsItem(parent), wire(wire), startGate(start), endGate(end)
 {
     setAcceptHoverEvents(true);
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable);
+    setFlags(QGraphicsItem::ItemIsSelectable);
 
     connect(startGate, &DrawableGate::positionChanged, this, [this](){
         updatePositions();
@@ -28,6 +28,7 @@ DrawableWire::~DrawableWire()
 {
     disconnect(startGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
     disconnect(endGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
+    emit deleteRequested(wire->id);
 }
 
 void DrawableWire::updatePositions()
@@ -72,9 +73,8 @@ void DrawableWire::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 void DrawableWire::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete)
-    {
-        emit deleteRequested(wire->id);
+    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
+
     } else {
         QGraphicsItem::keyPressEvent(event);
     }
@@ -82,6 +82,12 @@ void DrawableWire::keyPressEvent(QKeyEvent* event)
 
 void DrawableWire::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    setFocus();
     QGraphicsItem::mousePressEvent(event);
+}
+
+void DrawableWire::requestDeleteIfSelected()
+{
+    if (isSelected()) {
+        emit deleteRequested(wire->id);
+    }
 }

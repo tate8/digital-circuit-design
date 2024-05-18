@@ -7,6 +7,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QObject>
+#include <QKeyEvent>
 
 DrawableGate::DrawableGate(Gate* gate, QGraphicsItem* parent)
     : QObject(nullptr), QGraphicsItem(parent), gate(gate)
@@ -35,6 +36,13 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
         pen.setDashOffset(10);
         painter->setPen(pen);
         painter->drawRect(boundingRect());
+    }
+}
+
+void DrawableGate::requestDeleteIfSelected()
+{
+    if (isSelected()) {
+        emit deleteRequested(gate->id);
     }
 }
 

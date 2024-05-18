@@ -41,6 +41,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
     /// @brief Signals to draw a placeholder wire if the press was close enough
+    /// Also gives focus to this element
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     /// @brief Signals to update the position of the wire placeholder
@@ -81,6 +82,9 @@ public:
     /// @brief Gets the gate
     Gate* getGate();
 
+public slots:
+    void requestDeleteIfSelected();
+
 signals:
     /// @brief Emitted when the user is starting to draw a wire
     /// @param startGate - The starting gate
@@ -97,6 +101,10 @@ signals:
 
     /// @brief Emitted when the position changes
     void positionChanged();
+
+    /// @brief Emitted when user wants to delete this gate
+    /// @param gateId - The real gate's id
+    void deleteRequested(int gateId);
 };
 
 #endif // DRAWABLEGATE_H

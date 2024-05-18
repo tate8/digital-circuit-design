@@ -208,10 +208,20 @@ Gate* CircuitModel::addGate(GateType gateType)
     return newGate;
 }
 
-void CircuitModel::removeGateAndConnections(Gate* gate)
+void CircuitModel::removeGateAndConnections(int gateId)
 {
+    Gate* gateToRemove = nullptr;
+    for (auto& gate : gates)
+    {
+        if (gate->id == gateId)
+        {
+            gateToRemove = gate;
+            break;
+        }
+    }
+
     // Disallow removing the input and output gates
-    if(gate == nullptr || gate->type == GateType::InputGateType || gate->type == GateType::OutputGateType)
+    if(gateToRemove == nullptr || gateToRemove->type == GateType::InputGateType || gateToRemove->type == GateType::OutputGateType)
     {
         return;
     }
@@ -220,8 +230,8 @@ void CircuitModel::removeGateAndConnections(Gate* gate)
     QList<int> wiresToRemove;
     for (Wire* wire : wires)
     {
-        if (wire->endGate->id == gate->id
-            || wire->startGate->id == gate->id)
+        if (wire->endGate->id == gateId
+            || wire->startGate->id == gateId)
             wiresToRemove.append(wire->id);
     }
 
@@ -230,8 +240,8 @@ void CircuitModel::removeGateAndConnections(Gate* gate)
         removeWireConnection(wireId);
     }
 
-    gates.removeOne(gate);
-    delete gate;
+    gates.removeOne(gateToRemove);
+    delete gateToRemove;
 }
 
 void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inputPort)
@@ -240,7 +250,7 @@ void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inpu
         return;
 
     // Find the wire's id and remove it
-    for (Wire* wire : wires)
+    for (auto& wire : wires)
     {
         if (wire->startGate->id == endGate->id
             && wire->endGate->id == startGate->id
@@ -256,7 +266,7 @@ void CircuitModel::removeWireConnection(int wireId)
 {
     // Find the wire to remove
     Wire* wireToRemove;
-    for (auto wire : wires)
+    for (auto& wire : wires)
     {
         if (wire->id == wireId)
         {

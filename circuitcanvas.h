@@ -14,6 +14,7 @@ class CircuitCanvas : public QGraphicsView
     Q_OBJECT
 public:
     explicit CircuitCanvas(QWidget *parent = nullptr);
+    ~CircuitCanvas();
 
     /// @brief Methods to add/remove drawable gates and wires
     void addDrawableGate(Gate* gate);
@@ -55,9 +56,20 @@ private:
     /// @param wire - The wire to disconnect
     void removeWireInteractionConnections(DrawableWire* wire);
 
+    /// @brief Connects for interacting with gates
+    /// @param gate - The gate to connect
+    void addGateInteractionConnections(DrawableGate* gate);
+
+    /// @brief Disconnects for interacting with gates
+    /// @param gate - The gate to disconnect
+    void removeGateInteractionConnections(DrawableGate* gate);
+
     /// @brief Gets which gate, if any is at the specified scene position
     /// @param scenePos - The position to check for gates
     DrawableGate* getGateAtPosition(QPointF& scenePos);
+
+    /// @brief Listens for backspace key press to send delete signal
+    void keyPressEvent(QKeyEvent* event) override;
 
 public slots:
     /// @brief Start drawing a wire at the point
@@ -77,6 +89,10 @@ public slots:
     /// @param wireId - The id of the wire to delete
     void requestDeleteWire(int wireId);
 
+    /// @brief Emits a request to delete the gate
+    /// @param gateId - The id of the gate to delete
+    void requestDeleteGate(int gateId);
+
 signals:
     /// @brief requestedConnection Signals for a new connection between the two gates to be created
     /// @param startGate a Gate where the connection originates
@@ -85,8 +101,8 @@ signals:
     void requestedConnection(Gate* startGate, Gate* endGate, int inputPort);
 
     /// @brief requestedDeleteGate Signals for the a gate to be deleted
-    /// @param gate the gate to be removed
-    void requestedDeleteGate(Gate* gate);
+    /// @param gateId - The id of the gate to be removed
+    void requestedDeleteGate(int gateId);
 
     /// @brief requestedDeleteWire Signals for the wire connected to these 2 gates to be deleted
     /// @param wireId - The id of the wire to delete
@@ -96,6 +112,10 @@ signals:
     /// @param changeFirstGate - If the first gate should be changed, otherwise the second
     /// @param newValue - The new value
     void requestedChangeInput(bool changeFirstGate, bool newValue);
+
+    /// @brief Emitted to delete any selected items
+    /// All drawable items should be listening for this
+    void deleteIfSelected();
 
 };
 

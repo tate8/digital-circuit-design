@@ -12,9 +12,27 @@ CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
     setBackgroundBrush(Qt::white);
 }
 
+CircuitCanvas::~CircuitCanvas()
+{
+    for (auto it = wireMap.begin(); it != wireMap.end(); ++it)
+    {
+        delete it.value();
+    }
+
+    wireMap.clear();
+
+    for (auto it = gateMap.begin(); it != gateMap.end(); ++it)
+    {
+        delete it.value();
+    }
+
+    gateMap.clear();
+}
+
 void CircuitCanvas::addDrawableGate(Gate* gate)
 {
-    DrawableGate* drawableGate = new DrawableAndGate(dynamic_cast<AndGate*>(gate));
+    DrawableGate* drawableGate = new DrawableAndGate(gate);
+    addGateInteractionConnections(drawableGate);
     addWireDrawingConnections(drawableGate);
     scene->addItem(drawableGate);
     gateMap.insert(gate, drawableGate);
@@ -25,6 +43,7 @@ void CircuitCanvas::removeDrawableGate(Gate* gate)
     DrawableGate* drawableGate = gateMap.value(gate);
     if (drawableGate)
     {
+        removeGateInteractionConnections(drawableGate);
         removeWireDrawingConnections(drawableGate);
         scene->removeItem(drawableGate);
         delete drawableGate;
@@ -99,12 +118,27 @@ void CircuitCanvas::removeWireDrawingConnections(DrawableGate* gate)
 
 void CircuitCanvas::addWireInteractionConnections(DrawableWire* wire)
 {
+    connect(this, &CircuitCanvas::deleteIfSelected, wire, &DrawableWire::requestDeleteIfSelected);
     connect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
 }
 
 void CircuitCanvas::removeWireInteractionConnections(DrawableWire* wire)
 {
+    disconnect(this, &CircuitCanvas::deleteIfSelected, wire, &DrawableWire::requestDeleteIfSelected);
     disconnect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
+}
+
+void CircuitCanvas::addGateInteractionConnections(DrawableGate* gate)
+{
+    connect(this, &CircuitCanvas::deleteIfSelected, gate, &DrawableGate::requestDeleteIfSelected);
+    connect(gate, &DrawableGate::deleteRequested, this, &CircuitCanvas::requestDeleteGate);
+}
+
+
+void CircuitCanvas::removeGateInteractionConnections(DrawableGate* gate)
+{
+    disconnect(this, &CircuitCanvas::deleteIfSelected, gate, &DrawableGate::requestDeleteIfSelected);
+    disconnect(gate, &DrawableGate::deleteRequested, this, &CircuitCanvas::requestDeleteGate);
 }
 
 void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
@@ -165,4 +199,16 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
 void CircuitCanvas::requestDeleteWire(int wireId)
 {
     emit requestedDeleteWire(wireId);
+}
+
+void CircuitCanvas::requestDeleteGate(int gateId)
+{
+    emit requestedDeleteGate(gateId);
+}
+
+void CircuitCanvas::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
+        emit deleteIfSelected();
+    }
 }

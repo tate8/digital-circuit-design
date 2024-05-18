@@ -70,8 +70,8 @@ public slots:
     Gate* addGate(GateType gateType);
 
     /// @brief Removes a gate and its connections from the circuit
-    /// @param gate - gate to remove
-    void removeGateAndConnections(Gate* gate);
+    /// @param gateId - The id of the gate to remove
+    void removeGateAndConnections(int gateId);
 
     /// @brief Changes the output value of the specified input gate
     /// @param shouldChangeFirstGate - If you should change the first gate, otherwise
