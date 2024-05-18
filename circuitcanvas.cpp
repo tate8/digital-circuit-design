@@ -10,6 +10,8 @@ CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
     QRectF size = QRectF(0, 0, width(), height());
     scene->setSceneRect(size);
     setBackgroundBrush(Qt::white);
+    setMouseTracking(true);
+    setDragMode(QGraphicsView::RubberBandDrag);
 }
 
 CircuitCanvas::~CircuitCanvas()
@@ -211,4 +213,67 @@ void CircuitCanvas::keyPressEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
         emit deleteIfSelected();
     }
+}
+
+void CircuitCanvas::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        QPointF scenePos = mapToScene(event->pos());
+        QGraphicsItem* item = scene->itemAt(scenePos, QTransform());
+
+        if (item)
+        {
+            draggingItem = true;
+            QGraphicsView::mousePressEvent(event); // Default processing for item dragging
+        }
+        else
+        {
+            draggingItem = false;
+            origin = event->pos();
+            if (!rubberBand)
+                rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
+            rubberBand->setGeometry(QRect(origin, QSize()));
+            rubberBand->show();
+        }
+    }
+    else
+    {
+        QGraphicsView::mousePressEvent(event);
+    }
+}
+
+void CircuitCanvas::mouseMoveEvent(QMouseEvent* event)
+{
+    if (!draggingItem && rubberBand && (event->buttons() & Qt::LeftButton))
+    {
+        rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
+    }
+    else
+    {
+        QGraphicsView::mouseMoveEvent(event);
+    }
+}
+
+void CircuitCanvas::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        if (!draggingItem && rubberBand)
+        {
+            rubberBand->hide();
+            QRectF selectionRect = mapToScene(rubberBand->geometry()).boundingRect();
+
+            // Deselect all items first
+            scene->clearSelection();
+
+            // Select items within the rectangle
+            for (auto item : scene->items(selectionRect, Qt::IntersectsItemShape))
+            {
+                item->setSelected(true);
+            }
+        }
+        draggingItem = false;
+    }
+    QGraphicsView::mouseReleaseEvent(event);
 }

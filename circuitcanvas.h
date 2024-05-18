@@ -8,6 +8,7 @@
 #include "drawablewire.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QRubberBand>
 
 class CircuitCanvas : public QGraphicsView
 {
@@ -40,6 +41,15 @@ private:
     /// @brief The gate that a wire is being drawn from
     Gate* wireStartGate;
 
+    /// @brief The rectangular selection area
+    QRubberBand* rubberBand;
+
+    /// @brief The start of the rectangular selection area
+    QPoint origin;
+
+    /// @brief Flag that is set if the user is dragging an item around the scene
+    bool draggingItem;
+
     /// @brief Connects for drawing wires
     /// @param gate - The gate to connect
     void addWireDrawingConnections(DrawableGate* gate);
@@ -70,6 +80,22 @@ private:
 
     /// @brief Listens for backspace key press to send delete signal
     void keyPressEvent(QKeyEvent* event) override;
+
+protected:
+    /// @brief Handles mouse presses. If there is a graphics item underneath the
+    /// cursor, the default QGraphicsScene mouse press event will be called and
+    /// draggingItem will be set to true
+    /// If there is no item underneat, adjust the origin of the rectangular
+    /// selection tool
+    void mousePressEvent(QMouseEvent* event) override;
+
+    /// @brief If the user isn't dragging an item, update the rectangular
+    /// selection area. Otherwise call the regular graphics scene mouse move
+    void mouseMoveEvent(QMouseEvent* event) override;
+
+    /// @brief If the user is using the rectangular selector, hide it and
+    /// select all graphics items that are within its area in the scene
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 public slots:
     /// @brief Start drawing a wire at the point
