@@ -1,5 +1,7 @@
 #include "circuitcanvas.h"
 #include "DrawableGates/drawableandgate.h"
+#include "DrawableGates/drawableinputgate.h"
+#include "DrawableGates/drawableoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
 #include "wire.h"
@@ -43,7 +45,32 @@ CircuitCanvas::~CircuitCanvas()
 
 void CircuitCanvas::addDrawableGate(Gate* gate)
 {
-    DrawableGate* drawableGate = new DrawableAndGate(gate);
+    DrawableGate* drawableGate = nullptr;
+
+    if (gate->type == GateType::AndGateType)
+    {
+        drawableGate = new DrawableAndGate(gate);
+    }
+    else if (gate->type == GateType::InputGateType)
+    {
+        // Additional logic for toggling the inputs
+        DrawableInputGate* drawableInputGate = new DrawableInputGate(gate);
+        connect(drawableInputGate, &DrawableInputGate::toggleInput, this, [this](int gateId){
+            emit requestedToggleInput(gateId);
+        });
+        drawableGate = drawableInputGate;
+    }
+    else if (gate->type == GateType::OutputGateType)
+    {
+        drawableGate = new DrawableOutputGate(gate);
+    }
+    else
+    {
+        qDebug() << "Unhandled gate type";
+        return;
+    }
+
+
     addGateInteractionConnections(drawableGate);
     addWireDrawingConnections(drawableGate);
     scene->addItem(drawableGate);
@@ -68,7 +95,7 @@ void CircuitCanvas::updateDrawableGate(Gate* gate)
     DrawableGate* drawableGate = gateMap.value(gate);
     if (drawableGate)
     {
-        /// TODO
+        drawableGate->update();
     }
 }
 
@@ -97,7 +124,7 @@ void CircuitCanvas::updateDrawableWire(Wire* wire)
     DrawableWire* drawableWire = wireMap.value(wire);
     if (drawableWire)
     {
-        // TODO
+        drawableWire->update();
     }
 }
 
@@ -156,7 +183,7 @@ void CircuitCanvas::removeGateInteractionConnections(DrawableGate* gate)
 void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
 {
     // Customize pen color
-    QPen pen(QColor(77, 166, 255));
+    QPen pen(Qt::gray);
     pen.setWidth(2);
 
     currentWire = new QGraphicsLineItem(QLineF(startPos, startPos));

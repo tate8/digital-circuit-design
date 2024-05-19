@@ -15,10 +15,6 @@
 
 CircuitModel::CircuitModel(QObject* parent) : QObject(parent)
 {
-    // Add input and output gates at the start
-    inputGate1 = addGate(GateType::InputGateType);
-    inputGate2 = addGate(GateType::InputGateType);
-    outputGate = addGate(GateType::OutputGateType);
 }
 
 CircuitModel::~CircuitModel()
@@ -61,15 +57,28 @@ bool CircuitModel::simulateCircuit(bool value1, bool value2)
     return result;
 }
 
-void CircuitModel::changeInputGateValue(bool shouldChangeFirstGate, bool newValue)
+void CircuitModel::setInputGateValue(int gateId, bool newValue)
 {
-    if (shouldChangeFirstGate)
+
+    if (inputGate1->id == gateId)
     {
         inputGate1->setOutputState(newValue);
     }
     else
     {
         inputGate2->setOutputState(newValue);
+    }
+}
+
+void CircuitModel::toggleInputGateValue(int gateId)
+{
+    if (inputGate1->id == gateId)
+    {
+        inputGate1->setOutputState(!inputGate1->getOutputState());
+    }
+    else
+    {
+        inputGate2->setOutputState(!inputGate2->getOutputState());
     }
 }
 
@@ -131,9 +140,6 @@ void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port
 
 void CircuitModel::reset()
 {
-    // Set inputs to default value
-    inputGate1->setOutputState(0);
-    inputGate2->setOutputState(0);
 
     // Remove all wires
     wires.removeIf([](Wire* wire)
@@ -142,17 +148,15 @@ void CircuitModel::reset()
         return true;
     });
 
-    // Remove all gates but the input and output gates
-    gates.removeIf([](Gate* gate)
-    {
-        bool shouldRemove = gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
-        if (shouldRemove)
-        {
-            delete gate;
-        }
-
-        return shouldRemove;
+    gates.removeIf([](Gate* gate) {
+        delete gate;
+        return true;
     });
+
+    // Add input and output gates at the start
+    inputGate1 = addGate(GateType::InputGateType);
+    inputGate2 = addGate(GateType::InputGateType);
+    outputGate = addGate(GateType::OutputGateType);
 }
 
 Gate* CircuitModel::addGate(GateType gateType)

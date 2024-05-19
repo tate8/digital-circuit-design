@@ -13,9 +13,6 @@ class DrawableGate : public QObject, public QGraphicsItem
     Q_OBJECT
 private:
 
-    /// @brief gate a Gate pointer to this gate
-    Gate* gate;
-
     /// @brief If user dragging
     bool dragging;
 
@@ -31,6 +28,9 @@ protected:
     /// @brief Gets the offset value for the position of the specified output port
     /// @return an point for the offset
     virtual QPointF getOutputOffset() = 0;
+
+    /// @brief gate a Gate pointer to this gate
+    Gate* gate;
 public:
     explicit DrawableGate(Gate* gate, QGraphicsItem* parent = nullptr);
 

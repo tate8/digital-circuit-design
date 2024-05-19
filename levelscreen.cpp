@@ -70,7 +70,7 @@ LevelScreen::LevelScreen(QWidget *parent)
     connect(ui->circuitCanvas, &CircuitCanvas::requestedConnection, &model, &CircuitModel::addWireConnection);
     connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteGate, &model, &CircuitModel::removeGateAndConnections);
     connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteWire, &model, qOverload<int>(&CircuitModel::removeWireConnection));
-    connect(ui->circuitCanvas, &CircuitCanvas::requestedChangeInput, &model, &CircuitModel::changeInputGateValue);
+    connect(ui->circuitCanvas, &CircuitCanvas::requestedToggleInput, &model, &CircuitModel::toggleInputGateValue);
     connect(this, &LevelScreen::prepareLevel, &model, [this](){
         // Reset model state
         model.reset();
@@ -83,6 +83,9 @@ LevelScreen::LevelScreen(QWidget *parent)
         double zoomLevel = minZoom + (maxZoom - minZoom) * (position / 100.0);
         ui->circuitCanvas->zoomToValue(zoomLevel);
     });
+
+
+    model.reset();
 }
 
 LevelScreen::~LevelScreen()

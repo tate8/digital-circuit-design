@@ -1,54 +1,40 @@
-// #include "DrawableGates/drawableoutputgate.h"
+#include "DrawableGates/drawableoutputgate.h"
+#include "Gates/gate.h"
+#include <QPixmap>
+#include <QPointF>
 
-// DrawableOutputGate::DrawableOutputGate(OutputGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int DrawableOutputGate::getInputOffsetX(int input)
-// {
-//     return 23;
-// }
 
-// int DrawableOutputGate::getInputOffsetY(int input)
-// {
-//     return 40;
-// }
+DrawableOutputGate::DrawableOutputGate(Gate* gate) : DrawableGate(gate) {}
 
-// int DrawableOutputGate::getOutputOffsetX()
-// {
-//     return 5000;
-// }
+QPointF DrawableOutputGate::getInputOffset(int input) {
+    return QPoint(PADDING + 15, (IMAGE_HEIGHT * 0.5) + PADDING);
+}
 
-// int DrawableOutputGate::getOutputOffsetY()
-// {
-//     return 5000;
-// }
+QPointF DrawableOutputGate::getOutputOffset() {
+    return QPointF();
+}
 
-// QPixmap DrawableOutputGate::getImage()
-// {
-//     QMap<int,Gate*> inputs = this->getGate()->inputs;
-//     if(inputs.empty())
-//     {
-//         return QPixmap(":/gates/OutPutGateSpriteNoConnection.png").scaled(170,80);
-//     }else {
-//         int state = this->getGate()->getOutputState();
-//         if(state == 1)
-//         {
-//             return QPixmap(":/gates/OutPutGateSpriteOn.png").scaled(170,80);
+QPixmap DrawableOutputGate::getImage() {
+    QPixmap map;
+    if (gate->getOutputState()) {
+        map = QPixmap(":/gatePorts/lightOn.png");
+    } else {
+        map = QPixmap(":/gatePorts/lightOff.png");
+    }
+    return map.scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-//         }else
-//         {
-//             return QPixmap(":/gates/OutPutGateSpriteOff.png").scaled(170,80);
-//         }
-//     }
-// }
+QSize DrawableOutputGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/lightOn.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
 
-// QSize DrawableOutputGate::getBounds()
-// {
-//     return QSize(170,80);
-// }
-
-// int DrawableOutputGate::getNumInputs()
-// {
-//     return 1;
-// }
+int DrawableOutputGate::getNumInputs() {
+    return 1;
+}

@@ -124,9 +124,8 @@ signals:
     void requestedDeleteWire(int wireId);
 
     /// @brief Emitted when a input is changed
-    /// @param changeFirstGate - If the first gate should be changed, otherwise the second
-    /// @param newValue - The new value
-    void requestedChangeInput(bool changeFirstGate, bool newValue);
+    /// @param gateId - The id of the input gate to toggle
+    void requestedToggleInput(int gateId);
 
     /// @brief Emitted to delete any selected items
     /// All drawable items should be listening for this

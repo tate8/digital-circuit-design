@@ -1,49 +1,60 @@
-// #include "DrawableGates/drawableinputgate.h"
+#include "DrawableGates/drawableinputgate.h"
+#include "Gates/gate.h"
+#include <QPixmap>
+#include <QPointF>
+#include <QGraphicsSceneMouseEvent>
 
-// drawableInputGate::drawableInputGate(InputGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int drawableInputGate::getInputOffsetX(int input)
-// {
-//     return -1;
-// }
 
-// int drawableInputGate::getInputOffsetY(int input)
-// {
-//     // no inputs on input gate
-//     return -1;
-// }
+DrawableInputGate::DrawableInputGate(Gate* gate) : DrawableGate(gate) {}
 
-// int drawableInputGate::getOutputOffsetX()
-// {
-//     return 148;
-// }
+QPointF DrawableInputGate::getInputOffset(int input) {
+    Q_UNUSED(input);
+    return QPointF();
+}
 
-// int drawableInputGate::getOutputOffsetY()
-// {
-//     return 41;
-// }
+QPointF DrawableInputGate::getOutputOffset() {
+    QPixmap pixmap = QPixmap(":/gatePorts/inputOn.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
 
-// QPixmap drawableInputGate::getImage()
-// {
-//     int state = this->getGate()->getOutputState();
-//     if(state == 1)
-//     {
-//         return QPixmap(":/gates/inputGateOn.png").scaled(170,80);
+    return QPointF(width + PADDING, TOTAL_HEIGHT * 0.5);
+}
 
-//     }else
-//     {
-//         return QPixmap(":/gates/inputGateOff.png").scaled(170,80);
-//     }
-// }
+QPixmap DrawableInputGate::getImage() {
+    QPixmap map;
+    if (gate->getOutputState()) {
+        map = QPixmap(":/gatePorts/inputOn.png");
+    } else {
+         map = QPixmap(":/gatePorts/inputOff.png");
+    }
+    return map.scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-// QSize drawableInputGate::getBounds()
-// {
-//     return QSize(170,80);
-// }
+QSize DrawableInputGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/inputOn.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
 
-// int drawableInputGate::getNumInputs()
-// {
-//     return -1;
-// }
+int DrawableInputGate::getNumInputs() {
+    return 0;
+}
+
+
+void DrawableInputGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    pressLocation = event->scenePos();
+    DrawableGate::mousePressEvent(event);
+}
+
+void DrawableInputGate::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (event->scenePos() == pressLocation) {
+        emit toggleInput(gate->id);
+    }
+    DrawableGate::mouseReleaseEvent(event);
+}

@@ -19,5 +19,7 @@
         <file>xorGatePorts.png</file>
         <file>lightOff.png</file>
         <file>lightOn.png</file>
+        <file>inputOff.png</file>
+        <file>inputOn.png</file>
     </qresource>
 </RCC>

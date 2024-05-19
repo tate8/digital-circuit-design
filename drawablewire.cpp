@@ -62,7 +62,7 @@ void DrawableWire::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
     if (wire->getValue()) {
         pen = QPen(QColor(102, 204, 102), wireWidth);
     } else {
-        pen = QPen(QColor(77, 166, 255), wireWidth);
+        pen = QPen(Qt::gray, wireWidth);
     }
     painter->setPen(pen);
     painter->setOpacity(1.0);

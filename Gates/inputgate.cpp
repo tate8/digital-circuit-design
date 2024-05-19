@@ -5,7 +5,7 @@
 
 InputGate::InputGate(QObject* parent, GateType type) : Gate(parent, type)
 {
-    inputStates[0] = true;
+    inputStates[0] = false;
 }
 
 void InputGate::calculateOutput()

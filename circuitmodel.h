@@ -43,6 +43,11 @@ private:
     /// @param input2 - The second input
     bool simulateCircuit(bool input1, bool input2);
 
+    /// @brief Changes the output value of the specified input gate
+    /// @param gateId - The id of the input gate to change
+    /// @param newValue - The new boolean value to set it to
+    void setInputGateValue(int gateId, bool newValue);
+
 public slots:
     /// @brief Adds a connection between the output of a specified gate to the input of another
     /// @param outputGate - The gate whose output is being connected
@@ -74,10 +79,8 @@ public slots:
     void removeGateAndConnections(int gateId);
 
     /// @brief Changes the output value of the specified input gate
-    /// @param shouldChangeFirstGate - If you should change the first gate, otherwise
-    /// this changes the second gate
-    /// @param newValue - The new boolean value to set it to
-    void changeInputGateValue(bool shouldChangeFirstGate, bool newValue);
+    /// @param gateId - The id of the input gate to toggle
+    void toggleInputGateValue(int gateId);
 
     /// @brief Runs the circuit on a truth table.
     /// Emits runSuccess or runFailure depending on the results
