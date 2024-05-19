@@ -28,6 +28,12 @@ private:
     /// @brief Focuses wire on press
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
+    /// @brief Change the cursor on hover
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+
+    /// @brief Change the cursor on hover
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     /// @brief The model's wire
     Wire* wire;
 

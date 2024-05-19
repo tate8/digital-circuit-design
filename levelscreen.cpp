@@ -18,7 +18,7 @@ LevelScreen::LevelScreen(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Tutorial modals
+    // Add Gate Buttons
     connect(ui->andButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::AndGateType);
     });
@@ -75,6 +75,10 @@ LevelScreen::LevelScreen(QWidget *parent)
         // Reset model state
         model.reset();
     });
+
+    // Connect utility buttons to circuit canvas
+    connect(ui->zoomInButton, &QPushButton::clicked, ui->circuitCanvas, &CircuitCanvas::zoomIn);
+    connect(ui->zoomOutButton, &QPushButton::clicked, ui->circuitCanvas, &CircuitCanvas::zoomOut);
 }
 
 LevelScreen::~LevelScreen()

@@ -6,12 +6,21 @@
 CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
 {
     scene = new QGraphicsScene(this);
+
     setScene(scene);
+
+    setSceneRect(INT_MIN / 2, INT_MIN / 2, INT_MAX, INT_MAX);
+
     QRectF size = QRectF(0, 0, width(), height());
     scene->setSceneRect(size);
+
     setBackgroundBrush(Qt::white);
     setMouseTracking(true);
-    setDragMode(QGraphicsView::RubberBandDrag);
+    setRenderHint(QPainter::Antialiasing, true);
+    setDragMode(QGraphicsView::ScrollHandDrag);
+
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 CircuitCanvas::~CircuitCanvas()
@@ -173,7 +182,7 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
         // Determine which input pin the wire is closest to on the end gate
         int closestPin = -1;
         // The maximum distance from the pin required to make a connection
-        int snappingDistance = 10;
+        int snappingDistance = 50;
         double minDistance = std::numeric_limits<double>::max();
         int numInputs = endGate->getNumInputs();
         // Loop through all inputs and determine which one is closest
@@ -212,68 +221,19 @@ void CircuitCanvas::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Backspace || event->key() == Qt::Key_Delete) {
         emit deleteIfSelected();
+    } else {
+        QGraphicsView::keyPressEvent(event);
     }
 }
 
-void CircuitCanvas::mousePressEvent(QMouseEvent* event)
+void CircuitCanvas::zoomIn()
 {
-    if (event->button() == Qt::LeftButton)
-    {
-        QPointF scenePos = mapToScene(event->pos());
-        QGraphicsItem* item = scene->itemAt(scenePos, QTransform());
-
-        if (item)
-        {
-            draggingItem = true;
-            QGraphicsView::mousePressEvent(event); // Default processing for item dragging
-        }
-        else
-        {
-            draggingItem = false;
-            origin = event->pos();
-            if (!rubberBand)
-                rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
-            rubberBand->setGeometry(QRect(origin, QSize()));
-            rubberBand->show();
-        }
-    }
-    else
-    {
-        QGraphicsView::mousePressEvent(event);
-    }
+    const double scaleFactor = 1.1;
+    scale(scaleFactor, scaleFactor);
 }
 
-void CircuitCanvas::mouseMoveEvent(QMouseEvent* event)
+void CircuitCanvas::zoomOut()
 {
-    if (!draggingItem && rubberBand && (event->buttons() & Qt::LeftButton))
-    {
-        rubberBand->setGeometry(QRect(origin, event->pos()).normalized());
-    }
-    else
-    {
-        QGraphicsView::mouseMoveEvent(event);
-    }
-}
-
-void CircuitCanvas::mouseReleaseEvent(QMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        if (!draggingItem && rubberBand)
-        {
-            rubberBand->hide();
-            QRectF selectionRect = mapToScene(rubberBand->geometry()).boundingRect();
-
-            // Deselect all items first
-            scene->clearSelection();
-
-            // Select items within the rectangle
-            for (auto item : scene->items(selectionRect, Qt::IntersectsItemShape))
-            {
-                item->setSelected(true);
-            }
-        }
-        draggingItem = false;
-    }
-    QGraphicsView::mouseReleaseEvent(event);
+    const double scaleFactor = 1.1;
+    scale(1.0 / scaleFactor, 1.0 / scaleFactor);
 }

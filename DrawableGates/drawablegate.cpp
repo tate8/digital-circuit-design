@@ -28,7 +28,13 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
     Q_UNUSED(option);
     Q_UNUSED(widget);
     QPixmap pixmap = getImage();
-    painter->drawPixmap(0, 0, pixmap);
+    QSize bounds = getBounds();
+
+    // Calculate position to draw the pixmap in the center
+    int x = (bounds.width() - pixmap.width()) / 2;
+    int y = (bounds.height() - pixmap.height()) / 2;
+
+    painter->drawPixmap(x, y, pixmap);
 
     // Draw a box around the item if it is selected
     if (isSelected()) {
@@ -52,7 +58,7 @@ void DrawableGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QPointF outputPos = getOutputOffset();
 
     // Check if click is near the output pin
-    if ((localPos - outputPos).manhattanLength() < 10)
+    if ((localPos - outputPos).manhattanLength() < 25)
     {
         dragging = true;
         QGraphicsItem::mousePressEvent(event);
@@ -86,6 +92,18 @@ void DrawableGate::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         QGraphicsItem::mouseReleaseEvent(event);
     }
+}
+
+void DrawableGate::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+    setCursor(Qt::PointingHandCursor);
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void DrawableGate::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+    setCursor(Qt::ArrowCursor);
+    QGraphicsItem::hoverLeaveEvent(event);
 }
 
 QVariant DrawableGate::itemChange(GraphicsItemChange change, const QVariant &value)

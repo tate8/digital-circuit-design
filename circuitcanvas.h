@@ -81,22 +81,6 @@ private:
     /// @brief Listens for backspace key press to send delete signal
     void keyPressEvent(QKeyEvent* event) override;
 
-protected:
-    /// @brief Handles mouse presses. If there is a graphics item underneath the
-    /// cursor, the default QGraphicsScene mouse press event will be called and
-    /// draggingItem will be set to true
-    /// If there is no item underneat, adjust the origin of the rectangular
-    /// selection tool
-    void mousePressEvent(QMouseEvent* event) override;
-
-    /// @brief If the user isn't dragging an item, update the rectangular
-    /// selection area. Otherwise call the regular graphics scene mouse move
-    void mouseMoveEvent(QMouseEvent* event) override;
-
-    /// @brief If the user is using the rectangular selector, hide it and
-    /// select all graphics items that are within its area in the scene
-    void mouseReleaseEvent(QMouseEvent* event) override;
-
 public slots:
     /// @brief Start drawing a wire at the point
     /// @param startGate - The gate drawing from
@@ -118,6 +102,12 @@ public slots:
     /// @brief Emits a request to delete the gate
     /// @param gateId - The id of the gate to delete
     void requestDeleteGate(int gateId);
+
+    /// @brief Zooms the scene in
+    void zoomIn();
+
+    /// @brief Zooms the scene out
+    void zoomOut();
 
 signals:
     /// @brief requestedConnection Signals for a new connection between the two gates to be created

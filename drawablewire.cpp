@@ -3,6 +3,7 @@
 #include <QPainterPath>
 #include <QGraphicsSceneHoverEvent>
 #include <QKeyEvent>
+#include <QCursor>
 
 DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent)
     : QObject(nullptr), QGraphicsItem(parent), wire(wire), startGate(start), endGate(end)
@@ -83,6 +84,18 @@ void DrawableWire::keyPressEvent(QKeyEvent* event)
 void DrawableWire::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mousePressEvent(event);
+}
+
+void DrawableWire::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+    setCursor(QCursor(Qt::PointingHandCursor));
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void DrawableWire::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+    setCursor(QCursor(Qt::ArrowCursor));
+    QGraphicsItem::hoverLeaveEvent(event);
 }
 
 void DrawableWire::requestDeleteIfSelected()

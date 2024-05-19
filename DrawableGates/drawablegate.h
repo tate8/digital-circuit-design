@@ -50,6 +50,12 @@ public:
     /// @brief Signals to stop drawing the placehodler wire and possible connect
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    /// @brief Change the cursor on hover
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+
+    /// @brief Change the cursor on hover
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     /// @brief Qt method to listen to item moves
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
