@@ -77,8 +77,12 @@ LevelScreen::LevelScreen(QWidget *parent)
     });
 
     // Connect utility buttons to circuit canvas
-    connect(ui->zoomInButton, &QPushButton::clicked, ui->circuitCanvas, &CircuitCanvas::zoomIn);
-    connect(ui->zoomOutButton, &QPushButton::clicked, ui->circuitCanvas, &CircuitCanvas::zoomOut);
+    connect(ui->zoomSlider, &QSlider::valueChanged, this, [this](int position){
+        const double minZoom = 0.1;
+        const double maxZoom = 2.0;
+        double zoomLevel = minZoom + (maxZoom - minZoom) * (position / 100.0);
+        ui->circuitCanvas->zoomToValue(zoomLevel);
+    });
 }
 
 LevelScreen::~LevelScreen()

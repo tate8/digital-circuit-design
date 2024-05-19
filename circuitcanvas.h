@@ -103,11 +103,9 @@ public slots:
     /// @param gateId - The id of the gate to delete
     void requestDeleteGate(int gateId);
 
-    /// @brief Zooms the scene in
-    void zoomIn();
-
-    /// @brief Zooms the scene out
-    void zoomOut();
+    /// @brief Zooms the scene
+    /// @param zoomValue - What the zoom value should be
+    void zoomToValue(double zoomValue);
 
 signals:
     /// @brief requestedConnection Signals for a new connection between the two gates to be created

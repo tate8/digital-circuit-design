@@ -36,6 +36,18 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
     painter->drawPixmap(x, y, pixmap);
 
+    // Draw red circles around inputs
+    for (int i = 0; i < getNumInputs(); ++i) {
+        QPointF inputPos = getInputPos(i);
+        painter->setBrush(Qt::red);
+        painter->drawEllipse(inputPos, 5, 5);
+    }
+
+    // Draw red circle around output
+    QPointF outputPos = getOutputPos();
+    painter->setBrush(Qt::red);
+    painter->drawEllipse(outputPos, 5, 5);
+
     // Draw a box around the item if it is selected
     if (isSelected()) {
         QPen pen(Qt::lightGray, 2, Qt::DashLine, Qt::RoundCap, Qt::RoundJoin);

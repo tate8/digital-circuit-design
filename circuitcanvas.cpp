@@ -14,7 +14,7 @@ CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
     QRectF size = QRectF(0, 0, width(), height());
     scene->setSceneRect(size);
 
-    setBackgroundBrush(Qt::white);
+    // setBackgroundBrush(Qt::white);
     setMouseTracking(true);
     setRenderHint(QPainter::Antialiasing, true);
     setDragMode(QGraphicsView::ScrollHandDrag);
@@ -182,7 +182,7 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
         // Determine which input pin the wire is closest to on the end gate
         int closestPin = -1;
         // The maximum distance from the pin required to make a connection
-        int snappingDistance = 50;
+        int snappingDistance = 0;
         double minDistance = std::numeric_limits<double>::max();
         int numInputs = endGate->getNumInputs();
         // Loop through all inputs and determine which one is closest
@@ -226,14 +226,8 @@ void CircuitCanvas::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void CircuitCanvas::zoomIn()
+void CircuitCanvas::zoomToValue(double zoomValue)
 {
-    const double scaleFactor = 1.1;
-    scale(scaleFactor, scaleFactor);
-}
-
-void CircuitCanvas::zoomOut()
-{
-    const double scaleFactor = 1.1;
-    scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+    resetTransform();
+    scale(zoomValue, zoomValue);
 }
