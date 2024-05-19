@@ -2,6 +2,7 @@
 #include "DrawableGates/drawableandgate.h"
 #include <QMouseEvent>
 #include <QPainter>
+#include "wire.h"
 
 CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
 {
@@ -73,7 +74,7 @@ void CircuitCanvas::updateDrawableGate(Gate* gate)
 
 void CircuitCanvas::addDrawableWire(Wire* wire)
 {
-    DrawableWire* drawableWire = new DrawableWire(wire, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
+    DrawableWire* drawableWire = new DrawableWire(wire->inputPort, wire->getValue(), wire->id, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
     addWireInteractionConnections(drawableWire);
     scene->addItem(drawableWire);
     wireMap.insert(wire, drawableWire);
@@ -155,7 +156,7 @@ void CircuitCanvas::removeGateInteractionConnections(DrawableGate* gate)
 void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
 {
     // Customize pen color
-    QPen pen(Qt::black);
+    QPen pen(QColor(77, 166, 255));
     pen.setWidth(2);
 
     currentWire = new QGraphicsLineItem(QLineF(startPos, startPos));
@@ -182,7 +183,7 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
         // Determine which input pin the wire is closest to on the end gate
         int closestPin = -1;
         // The maximum distance from the pin required to make a connection
-        int snappingDistance = 0;
+        int snappingDistance = 50;
         double minDistance = std::numeric_limits<double>::max();
         int numInputs = endGate->getNumInputs();
         // Loop through all inputs and determine which one is closest

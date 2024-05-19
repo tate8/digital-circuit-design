@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QRubberBand>
+#include "wire.h"
 
 class CircuitCanvas : public QGraphicsView
 {

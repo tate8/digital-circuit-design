@@ -2,14 +2,13 @@
 #define DRAWABLEWIRE_H
 
 #include <QGraphicsItem>
-#include "wire.h"
 #include "DrawableGates/drawablegate.h"
 
 class DrawableWire : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    explicit DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent = nullptr);
+    explicit DrawableWire(int inputPort, int value, int id, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent = nullptr);
     ~DrawableWire();
 
     /// @brief Gets the bounding rect
@@ -34,8 +33,17 @@ private:
     /// @brief Change the cursor on hover
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    /// @brief The model's wire
-    Wire* wire;
+    /// @brief Updates the shape to just be a line
+    QPainterPath shape() const override;
+
+    /// @brief The input port that the real wire connects to
+    int wireInputPort;
+
+    /// @brief The value of the real wire
+    int wireValue;
+
+    /// @brief The id of the real wire
+    int wireId;
 
     /// @brief The start gate
     DrawableGate* startGate;
