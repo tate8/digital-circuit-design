@@ -5,8 +5,8 @@
 #include <QKeyEvent>
 #include <QCursor>
 
-DrawableWire::DrawableWire(int inputPort, int value, int id,  DrawableGate* start, DrawableGate* end, QGraphicsItem* parent)
-    : QObject(nullptr), QGraphicsItem(parent), wireInputPort(inputPort), wireValue(value), wireId(id), startGate(start), endGate(end)
+DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent)
+    : QObject(nullptr), QGraphicsItem(parent), wire(wire), startGate(start), endGate(end)
 {
     setAcceptHoverEvents(true);
     setFlags(QGraphicsItem::ItemIsSelectable);
@@ -20,7 +20,7 @@ DrawableWire::DrawableWire(int inputPort, int value, int id,  DrawableGate* star
     });
 
     startPoint = startGate->getOutputPos();
-    endPoint = endGate->getInputPos(wireId);
+    endPoint = endGate->getInputPos(wire->inputPort);
 
     updatePositions();
 }
@@ -29,14 +29,14 @@ DrawableWire::~DrawableWire()
 {
     disconnect(startGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
     disconnect(endGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
-    emit deleteRequested(wireId);
+    emit deleteRequested(wire->id);
 }
 
 void DrawableWire::updatePositions()
 {
     // Get the new start and end points, and then ask to redraw
     startPoint = startGate->getOutputPos();
-    endPoint = endGate->getInputPos(wireInputPort);
+    endPoint = endGate->getInputPos(wire->inputPort);
     prepareGeometryChange();
 }
 
@@ -58,14 +58,12 @@ void DrawableWire::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
     int wireWidth = 3;
 
-    // Pen will be green or blue if the wire has charge or not
     QPen pen;
-    if (wireValue) {
+    if (wire->getValue()) {
         pen = QPen(QColor(102, 204, 102), wireWidth);
     } else {
         pen = QPen(QColor(77, 166, 255), wireWidth);
     }
-
     painter->setPen(pen);
     painter->setOpacity(1.0);
 
@@ -84,7 +82,7 @@ QPainterPath DrawableWire::shape() const
     QPainterPath path;
     // Define a path that covers the area around the line with a width of 10 units
     QPainterPathStroker stroker;
-    stroker.setWidth(10);
+    stroker.setWidth(25);
     path.moveTo(startPoint);
     path.lineTo(endPoint);
     return stroker.createStroke(path);
@@ -119,6 +117,6 @@ void DrawableWire::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 void DrawableWire::requestDeleteIfSelected()
 {
     if (isSelected()) {
-        emit deleteRequested(wireId);
+        emit deleteRequested(wire->id);
     }
 }

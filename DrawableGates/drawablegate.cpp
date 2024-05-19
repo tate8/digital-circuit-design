@@ -58,7 +58,7 @@ void DrawableGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QPointF outputPos = getOutputOffset();
 
     // Check if click is near the output pin
-    if ((localPos - outputPos).manhattanLength() < 30)
+    if ((localPos - outputPos).manhattanLength() < 50)
     {
         dragging = true;
         QGraphicsItem::mousePressEvent(event);

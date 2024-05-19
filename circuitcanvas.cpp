@@ -74,7 +74,7 @@ void CircuitCanvas::updateDrawableGate(Gate* gate)
 
 void CircuitCanvas::addDrawableWire(Wire* wire)
 {
-    DrawableWire* drawableWire = new DrawableWire(wire->inputPort, wire->getValue(), wire->id, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
+    DrawableWire* drawableWire = new DrawableWire(wire, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
     addWireInteractionConnections(drawableWire);
     scene->addItem(drawableWire);
     wireMap.insert(wire, drawableWire);
