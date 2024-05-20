@@ -8,6 +8,7 @@
 #include "Gates/gate.h"
 #include "wire.h"
 #include "GateTypes.h"
+#include "memory"
 
 /// @brief The CircuitModel holds all logic for a digital circuit
 /// This includes things like adding and removing gates and wires, simulating
@@ -24,19 +25,19 @@ public:
 
 private:
     /// @brief The list of circuit gates
-    QList<Gate*> gates;
+    QList<std::unique_ptr<Gate>> gates;
 
     /// @brief The list of circuit wires
-    QList<Wire*> wires;
+    QList<std::unique_ptr<Wire>> wires;
 
     /// @brief The first input gate
-    Gate* inputGate1;
+    std::unique_ptr<Gate> inputGate1;
 
     /// @brief The second input gate
-    Gate* inputGate2;
+    std::unique_ptr<Gate> inputGate2;
 
     /// @brief The output gate
-    Gate* outputGate;
+    std::unique_ptr<Gate> outputGate;
 
     /// @brief Simulates the circuit with given inputs, and returns the result
     /// @param input1 - The first input
@@ -72,7 +73,7 @@ public slots:
     /// @brief Adds a gate to the circuit
     /// @param gateType - What type of gate to create
     /// @return A pointer to the new gate
-    Gate* addGate(GateType gateType);
+    std::unique_ptr<Gate> addGate(GateType gateType);
 
     /// @brief Removes a gate and its connections from the circuit
     /// @param gateId - The id of the gate to remove

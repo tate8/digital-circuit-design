@@ -2,7 +2,6 @@
 /// Reviewed by Tate Larkin
 
 #include "circuitmodel.h"
-#include "QtCore/qdebug.h"
 #include "Gates/andgate.h"
 #include "Gates/orgate.h"
 #include "Gates/inputgate.h"
@@ -12,6 +11,7 @@
 #include "Gates/nandgate.h"
 #include "Gates/xorgate.h"
 #include "Gates/norgate.h"
+#include <memory>
 
 CircuitModel::CircuitModel(QObject* parent) : QObject(parent)
 {
@@ -19,17 +19,6 @@ CircuitModel::CircuitModel(QObject* parent) : QObject(parent)
 
 CircuitModel::~CircuitModel()
 {
-    // Delete all wires
-    wires.removeIf([](Wire* wire) {
-        delete wire;
-        return true;
-    });
-
-    // Delete all gates
-    gates.removeIf([](Gate* gate) {
-        delete gate;
-        return true;
-    });
 }
 
 bool CircuitModel::simulateCircuit(bool value1, bool value2)
@@ -108,7 +97,7 @@ void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port
 {
     // Check if wire already exists and exit if so
     bool found = false;
-    for (const Wire* wire : wires)
+    for (const auto& wire : wires)
     {
         if (wire->endGate->id == inputGate->id &&
             wire->inputPort == port)
@@ -122,36 +111,26 @@ void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port
     }
 
     // Create new wire
-    Wire* newWire = new Wire(outputGate, inputGate, port);
+    auto newWire = std::make_unique<Wire>(outputGate, inputGate, port);
 
     // When wire changes, send signal
-    connect(newWire, &Wire::updated, this, [this, newWire](){
+    connect(newWire.get(), &Wire::updated, this, [this, newWire = newWire.get()](){
         emit wireUpdated(newWire);
     });
 
     // When wire dies, send signal
-    connect(newWire, &Wire::removed, this, [this, newWire](){
+    connect(newWire.get(), &Wire::removed, this, [this, newWire = newWire.get()](){
         emit wireRemoved(newWire);
     });
 
-    wires.append(newWire);
-    emit wireAdded(newWire);
+    wires.push_back(std::move(newWire));
+    emit wireAdded(wires.back().get());
 }
 
 void CircuitModel::reset()
 {
-
-    // Remove all wires
-    wires.removeIf([](Wire* wire)
-    {
-        delete wire;
-        return true;
-    });
-
-    gates.removeIf([](Gate* gate) {
-        delete gate;
-        return true;
-    });
+    wires.clear();
+    gates.clear();
 
     // Add input and output gates at the start
     inputGate1 = addGate(GateType::InputGateType);
@@ -159,102 +138,90 @@ void CircuitModel::reset()
     outputGate = addGate(GateType::OutputGateType);
 }
 
-Gate* CircuitModel::addGate(GateType gateType)
+std::unique_ptr<Gate> CircuitModel::addGate(GateType gateType)
 {
-    Gate* newGate;
+    std::unique_ptr<Gate> newGate;
     // Add the correct gate depending on the input gate type
     switch (gateType)
     {
     case GateType::AndGateType:
-        newGate = new AndGate(nullptr);
+        newGate = std::make_unique<AndGate>(nullptr);
         break;
     case GateType::OrGateType:
-        newGate = new OrGate(nullptr);
+        newGate = std::make_unique<OrGate>(nullptr);
         break;
     case GateType::NotGateType:
-        newGate = new NotGate(nullptr);
+        newGate = std::make_unique<NotGate>(nullptr);
         break;
     case GateType::InputGateType:
-        newGate = new InputGate(nullptr);
+        newGate = std::make_unique<InputGate>(nullptr);
         break;
     case GateType::OutputGateType:
-        newGate = new OutputGate(nullptr);
+        newGate = std::make_unique<OutputGate>(nullptr);
         break;
     case GateType::NorGateType:
-        newGate = new NorGate(nullptr);
+        newGate = std::make_unique<NorGate>(nullptr);
         break;
     case GateType::XorGateType:
-        newGate = new XorGate(nullptr);
+        newGate = std::make_unique<XorGate>(nullptr);
         break;
     case GateType::NandGateType:
-        newGate = new NandGate(nullptr);
+        newGate = std::make_unique<NandGate>(nullptr);
         break;
     case GateType::SandboxOutputGateType:
-        newGate = new SandboxOutputGate(nullptr);
+        newGate = std::make_unique<SandboxOutputGate>(nullptr);
         break;
     default:
-        qDebug() << "Invalid gate type";
+        assert(false);
         return nullptr;
     }
 
     // When gate changes, send signal
-    connect(newGate, &Gate::outputChanged, this, [this, newGate](){
+    connect(newGate.get(), &Gate::outputChanged, this, [this, newGate = newGate.get()](){
         emit gateUpdated(newGate);
     });
 
     // When gate dies, send signal
-    connect(newGate, &Gate::removed, this, [this, newGate](){
+    connect(newGate.get(), &Gate::removed, this, [this, newGate = newGate.get()](){
         emit gateRemoved(newGate);
     });
 
-    gates.append(newGate);
-    emit gateAdded(newGate);
-    return newGate;
+    gates.push_back(std::move(newGate));
+    emit gateAdded(gates.back().get());
+    return std::move(gates.back());
+
 }
 
 void CircuitModel::removeGateAndConnections(int gateId)
 {
-    Gate* gateToRemove = nullptr;
-    for (auto& gate : gates)
-    {
-        if (gate->id == gateId)
-        {
-            gateToRemove = gate;
-            break;
-        }
-    }
-
-    // Disallow removing the input and output gates
-    if(gateToRemove == nullptr || gateToRemove->type == GateType::InputGateType || gateToRemove->type == GateType::OutputGateType)
-    {
-        return;
-    }
-
     // Find all wires connected to this gate and remove them
     QList<int> wiresToRemove;
-    for (Wire* wire : wires)
+    for (auto const& wire : wires)
     {
         if (wire->endGate->id == gateId
             || wire->startGate->id == gateId)
+        {
             wiresToRemove.append(wire->id);
+        }
     }
 
-    for (int wireId : wiresToRemove)
+    for (auto const& wireId : wiresToRemove)
     {
         removeWireConnection(wireId);
     }
 
-    gates.removeOne(gateToRemove);
-    delete gateToRemove;
+    gates.removeIf([gateId](const std::unique_ptr<Gate>& gate) {
+        return gate->id == gateId && gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
+    });
 }
 
 void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inputPort)
 {
-    if(endGate == nullptr)
-        return;
+    assert(startGate);
+    assert(endGate);
 
     // Find the wire's id and remove it
-    for (auto& wire : wires)
+    for (auto const& wire : wires)
     {
         if (wire->startGate->id == endGate->id
             && wire->endGate->id == startGate->id
@@ -268,19 +235,12 @@ void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inpu
 
 void CircuitModel::removeWireConnection(int wireId)
 {
-    // Find the wire to remove
-    Wire* wireToRemove;
-    for (auto& wire : wires)
-    {
-        if (wire->id == wireId)
+    wires.removeIf([wireId](const std::unique_ptr<Wire>& wire) {
+        bool shouldRemove = wire->id == wireId;
+        if (shouldRemove)
         {
-            wireToRemove = wire;
-            break;
+            wire->onInputChanged(false);
         }
-    }
-
-    wires.removeOne(wireToRemove);
-    wireToRemove->onInputChanged(false);
-
-    delete wireToRemove;
+        return shouldRemove;
+    });
 }

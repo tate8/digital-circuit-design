@@ -79,6 +79,8 @@ void CircuitCanvas::addDrawableGate(Gate* gate)
 
 void CircuitCanvas::removeDrawableGate(Gate* gate)
 {
+    assert(gate && gateMap.contains(gate));
+
     DrawableGate* drawableGate = gateMap.value(gate);
     if (drawableGate)
     {
@@ -92,6 +94,8 @@ void CircuitCanvas::removeDrawableGate(Gate* gate)
 
 void CircuitCanvas::updateDrawableGate(Gate* gate)
 {
+    assert(gate && gateMap.contains(gate));
+
     DrawableGate* drawableGate = gateMap.value(gate);
     if (drawableGate)
     {
@@ -109,6 +113,8 @@ void CircuitCanvas::addDrawableWire(Wire* wire)
 
 void CircuitCanvas::removeDrawableWire(Wire* wire)
 {
+    assert(wire && wireMap.contains(wire));
+
     DrawableWire* drawableWire = wireMap.value(wire);
     if (drawableWire)
     {
@@ -121,6 +127,8 @@ void CircuitCanvas::removeDrawableWire(Wire* wire)
 
 void CircuitCanvas::updateDrawableWire(Wire* wire)
 {
+    assert(wire && wireMap.contains(wire));
+
     DrawableWire* drawableWire = wireMap.value(wire);
     if (drawableWire)
     {
@@ -130,8 +138,11 @@ void CircuitCanvas::updateDrawableWire(Wire* wire)
 
 DrawableGate* CircuitCanvas::getGateAtPosition(QPointF& scenePos)
 {
-    foreach (QGraphicsItem* item, scene->items(scenePos))
+    for (QGraphicsItem* item : scene->items(scenePos))
     {
+        if (!item)
+            continue;  // Skip if the item is a nullptr
+
         DrawableGate* gate = dynamic_cast<DrawableGate*>(item);
         if (gate)
         {
@@ -143,6 +154,8 @@ DrawableGate* CircuitCanvas::getGateAtPosition(QPointF& scenePos)
 
 void CircuitCanvas::addWireDrawingConnections(DrawableGate* gate)
 {
+    assert(gate);
+
     connect(gate, &DrawableGate::startDrawingWire, this, &CircuitCanvas::startDrawingWire);
     connect(gate, &DrawableGate::updateDrawingWire, this, &CircuitCanvas::updateDrawingWire);
     connect(gate, &DrawableGate::endDrawingWire, this, &CircuitCanvas::endDrawingWire);
@@ -150,6 +163,8 @@ void CircuitCanvas::addWireDrawingConnections(DrawableGate* gate)
 
 void CircuitCanvas::removeWireDrawingConnections(DrawableGate* gate)
 {
+    assert(gate);
+
     disconnect(gate, &DrawableGate::startDrawingWire, this, &CircuitCanvas::startDrawingWire);
     disconnect(gate, &DrawableGate::updateDrawingWire, this, &CircuitCanvas::updateDrawingWire);
     disconnect(gate, &DrawableGate::endDrawingWire, this, &CircuitCanvas::endDrawingWire);
@@ -157,18 +172,24 @@ void CircuitCanvas::removeWireDrawingConnections(DrawableGate* gate)
 
 void CircuitCanvas::addWireInteractionConnections(DrawableWire* wire)
 {
+    assert(wire);
+
     connect(this, &CircuitCanvas::deleteIfSelected, wire, &DrawableWire::requestDeleteIfSelected);
     connect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
 }
 
 void CircuitCanvas::removeWireInteractionConnections(DrawableWire* wire)
 {
+    assert(wire);
+
     disconnect(this, &CircuitCanvas::deleteIfSelected, wire, &DrawableWire::requestDeleteIfSelected);
     disconnect(wire, &DrawableWire::deleteRequested, this, &CircuitCanvas::requestDeleteWire);
 }
 
 void CircuitCanvas::addGateInteractionConnections(DrawableGate* gate)
 {
+    assert(gate);
+
     connect(this, &CircuitCanvas::deleteIfSelected, gate, &DrawableGate::requestDeleteIfSelected);
     connect(gate, &DrawableGate::deleteRequested, this, &CircuitCanvas::requestDeleteGate);
 }
@@ -176,6 +197,8 @@ void CircuitCanvas::addGateInteractionConnections(DrawableGate* gate)
 
 void CircuitCanvas::removeGateInteractionConnections(DrawableGate* gate)
 {
+    assert(gate);
+
     disconnect(this, &CircuitCanvas::deleteIfSelected, gate, &DrawableGate::requestDeleteIfSelected);
     disconnect(gate, &DrawableGate::deleteRequested, this, &CircuitCanvas::requestDeleteGate);
 }
