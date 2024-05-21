@@ -9,7 +9,6 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QRubberBand>
-#include "wire.h"
 
 class CircuitCanvas : public QGraphicsView
 {
@@ -19,28 +18,28 @@ public:
     ~CircuitCanvas();
 
     /// @brief Methods to add/remove drawable gates and wires
-    void addDrawableGate(Gate* gate);
-    void removeDrawableGate(Gate* gate);
-    void updateDrawableGate(Gate* gate);
-    void addDrawableWire(Wire* wire);
-    void removeDrawableWire(Wire* wire);
-    void updateDrawableWire(Wire* wire);
+    void addDrawableGate(int gateId, bool value, GateType type);
+    void removeDrawableGate(int gateId);
+    void updateDrawableGate(int gateId, bool value);
+    void addDrawableWire(int wireId, bool value, int startGateId, int endGateId, int port);
+    void removeDrawableWire(int wireId);
+    void updateDrawableWire(int wireId, bool value);
 
 private:
     /// @brief The scene where the elements will be drawn on
     QGraphicsScene* scene;
 
-    /// @brief Map from real gate to drawable gate
-    QMap<Gate*, DrawableGate*> gateMap;
+    /// @brief Map from real gate id to drawable gate
+    std::map<int, std::unique_ptr<DrawableGate>> gateMap;
 
-    /// @brief Map from real wire to drawable wire
-    QMap<Wire*, DrawableWire*> wireMap;
+    /// @brief Map from real wire id to drawable wire
+    std::map<int, std::unique_ptr<DrawableWire>> wireMap;
 
     /// @brief The current wire being drawn
     QGraphicsLineItem* currentWire;
 
-    /// @brief The gate that a wire is being drawn from
-    Gate* wireStartGate;
+    /// @brief The gate id that a wire is being drawn from
+    int wireStartGateId;
 
     /// @brief The rectangular selection area
     QRubberBand* rubberBand;
@@ -77,16 +76,16 @@ private:
 
     /// @brief Gets which gate, if any is at the specified scene position
     /// @param scenePos - The position to check for gates
-    DrawableGate* getGateAtPosition(QPointF& scenePos);
+    int getGateIdAtPosition(QPointF& scenePos);
 
     /// @brief Listens for backspace key press to send delete signal
     void keyPressEvent(QKeyEvent* event) override;
 
 public slots:
     /// @brief Start drawing a wire at the point
-    /// @param startGate - The gate drawing from
+    /// @param startGate - The id of the gate drawing from
     /// @param start - The point to start drawing at
-    void startDrawingWire(Gate* startGate, QPointF start);
+    void startDrawingWire(int startGateId, QPointF start);
 
     /// @brief Update drawing a wire at the point
     /// @param update - The point to update drawing at
@@ -109,17 +108,17 @@ public slots:
     void zoomToValue(double zoomValue);
 
 signals:
-    /// @brief requestedConnection Signals for a new connection between the two gates to be created
-    /// @param startGate a Gate where the connection originates
-    /// @param endGate a Gate with the destination of the connection
-    /// @param inputPort and int for which port to connect
-    void requestedConnection(Gate* startGate, Gate* endGate, int inputPort);
+    /// @brief Signals for a new connection between the two gates to be created
+    /// @param startGateId -  The origin of the connection
+    /// @param endGateId -  The destination of the connection
+    /// @param inputPort - Which port to connect
+    void requestedConnection(int startGateId, int endGateId, int inputPort);
 
-    /// @brief requestedDeleteGate Signals for the a gate to be deleted
+    /// @brief Signals for the a gate to be deleted
     /// @param gateId - The id of the gate to be removed
     void requestedDeleteGate(int gateId);
 
-    /// @brief requestedDeleteWire Signals for the wire connected to these 2 gates to be deleted
+    /// @brief Signals for the wire connected to these 2 gates to be deleted
     /// @param wireId - The id of the wire to delete
     void requestedDeleteWire(int wireId);
 

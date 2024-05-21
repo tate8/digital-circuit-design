@@ -22,7 +22,7 @@ protected:
     virtual QPointF getOutputOffset() override;
 
 public:
-    DrawableInputGate(Gate* gate);
+    DrawableInputGate(int gateId, bool value);
     virtual QSize getBounds() const override;
     virtual QPixmap getImage() override;
     virtual int getNumInputs() override;

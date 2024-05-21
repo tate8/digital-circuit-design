@@ -23,10 +23,10 @@ CircuitModel::~CircuitModel()
 
 bool CircuitModel::simulateCircuit(bool value1, bool value2)
 {
-    if (!inputGate1 || !inputGate2 || !outputGate)
-    {
-        return false;
-    }
+    auto inputGate1 = findGateById(inputGate1Id)->get();
+    auto inputGate2 = findGateById(inputGate2Id)->get();
+    auto outputGate = findGateById(outputGateId)->get();
+
     // Keep track of previous values to restore
     bool prevInput1Value = inputGate1->getOutputState();
     bool prevInput2Value = inputGate2->getOutputState();
@@ -48,7 +48,8 @@ bool CircuitModel::simulateCircuit(bool value1, bool value2)
 
 void CircuitModel::setInputGateValue(int gateId, bool newValue)
 {
-
+    auto inputGate1 = findGateById(inputGate1Id)->get();
+    auto inputGate2 = findGateById(inputGate2Id)->get();
     if (inputGate1->id == gateId)
     {
         inputGate1->setOutputState(newValue);
@@ -61,6 +62,8 @@ void CircuitModel::setInputGateValue(int gateId, bool newValue)
 
 void CircuitModel::toggleInputGateValue(int gateId)
 {
+    auto inputGate1 = findGateById(inputGate1Id)->get();
+    auto inputGate2 = findGateById(inputGate2Id)->get();
     if (inputGate1->id == gateId)
     {
         inputGate1->setOutputState(!inputGate1->getOutputState());
@@ -93,14 +96,14 @@ void CircuitModel::run(const QVector<bool>& expected)
     emit runSuccess();
 }
 
-void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port)
+void CircuitModel::addWireConnection(int outputGateId, int inputGateId, int port)
 {
     // Check if wire already exists and exit if so
     bool found = false;
-    for (const auto& wire : wires)
+    for (auto const& wire : wires)
     {
-        if (wire->endGate->id == inputGate->id &&
-            wire->inputPort == port)
+        if (wire.get()->endGate->id == inputGateId &&
+            wire.get()->inputPort == port)
         {
             found = true;
         }
@@ -111,20 +114,29 @@ void CircuitModel::addWireConnection(Gate* outputGate, Gate* inputGate, int port
     }
 
     // Create new wire
+    auto outputGate = findGateById(outputGateId)->get();
+    auto inputGate = findGateById(inputGateId)->get();
+
     auto newWire = std::make_unique<Wire>(outputGate, inputGate, port);
 
+    int newWireId = newWire.get()->id;
+    bool newWireValue = newWire.get()->getValue();
+    int newWireStartGateId = newWire.get()->startGate->id;
+    int newWireEndGateId = newWire.get()->endGate->id;
+    int newWirePort = newWire.get()->inputPort;
+
     // When wire changes, send signal
-    connect(newWire.get(), &Wire::updated, this, [this, newWire = newWire.get()](){
-        emit wireUpdated(newWire);
+    connect(newWire.get(), &Wire::updated, this, [this, newWireId](bool value){
+        emit wireUpdated(newWireId, value);
     });
 
     // When wire dies, send signal
-    connect(newWire.get(), &Wire::removed, this, [this, newWire = newWire.get()](){
-        emit wireRemoved(newWire);
+    connect(newWire.get(), &Wire::removed, this, [this, newWireId](){
+        emit wireRemoved(newWireId);
     });
 
     wires.push_back(std::move(newWire));
-    emit wireAdded(wires.back().get());
+    emit wireAdded(newWireId, newWireValue, newWireStartGateId, newWireEndGateId, newWirePort);
 }
 
 void CircuitModel::reset()
@@ -133,12 +145,12 @@ void CircuitModel::reset()
     gates.clear();
 
     // Add input and output gates at the start
-    inputGate1 = addGate(GateType::InputGateType);
-    inputGate2 = addGate(GateType::InputGateType);
-    outputGate = addGate(GateType::OutputGateType);
+    inputGate1Id = addGate(GateType::InputGateType);
+    inputGate2Id = addGate(GateType::InputGateType);
+    outputGateId = addGate(GateType::OutputGateType);
 }
 
-std::unique_ptr<Gate> CircuitModel::addGate(GateType gateType)
+int CircuitModel::addGate(GateType gateType)
 {
     std::unique_ptr<Gate> newGate;
     // Add the correct gate depending on the input gate type
@@ -173,22 +185,26 @@ std::unique_ptr<Gate> CircuitModel::addGate(GateType gateType)
         break;
     default:
         assert(false);
-        return nullptr;
+        return -1;
     }
 
+    int newGateId = newGate.get()->id;
+    bool newGateValue = newGate.get()->getOutputState();
+    GateType newGateType = gateType;
+
     // When gate changes, send signal
-    connect(newGate.get(), &Gate::outputChanged, this, [this, newGate = newGate.get()](){
-        emit gateUpdated(newGate);
+    connect(newGate.get(), &Gate::outputChanged, this, [this, newGateId](bool value){
+        emit gateUpdated(newGateId, value);
     });
 
     // When gate dies, send signal
-    connect(newGate.get(), &Gate::removed, this, [this, newGate = newGate.get()](){
-        emit gateRemoved(newGate);
+    connect(newGate.get(), &Gate::removed, this, [this, newGateId](){
+        emit gateRemoved(newGateId);
     });
 
     gates.push_back(std::move(newGate));
-    emit gateAdded(gates.back().get());
-    return std::move(gates.back());
+    emit gateAdded(newGateId, newGateValue, newGateType);
+    return newGateId;
 
 }
 
@@ -210,37 +226,34 @@ void CircuitModel::removeGateAndConnections(int gateId)
         removeWireConnection(wireId);
     }
 
-    gates.removeIf([gateId](const std::unique_ptr<Gate>& gate) {
-        return gate->id == gateId && gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
-    });
-}
-
-void CircuitModel::removeWireConnection(Gate* startGate, Gate* endGate, int inputPort)
-{
-    assert(startGate);
-    assert(endGate);
-
-    // Find the wire's id and remove it
-    for (auto const& wire : wires)
-    {
-        if (wire->startGate->id == endGate->id
-            && wire->endGate->id == startGate->id
-            && wire->inputPort == inputPort)
-        {
-            removeWireConnection(wire->id);
-            break;
-        }
-    }
+    gates.erase(std::remove_if(gates.begin(), gates.end(),
+                               [gateId](const std::unique_ptr<Gate>& gate) {
+                                   return gate->id == gateId && gate->type != GateType::InputGateType && gate->type != GateType::OutputGateType;
+                }),
+                gates.end()
+    );
 }
 
 void CircuitModel::removeWireConnection(int wireId)
 {
-    wires.removeIf([wireId](const std::unique_ptr<Wire>& wire) {
-        bool shouldRemove = wire->id == wireId;
-        if (shouldRemove)
-        {
-            wire->onInputChanged(false);
+    wires.erase(
+        std::remove_if(wires.begin(), wires.end(),
+                       [wireId](const std::unique_ptr<Wire>& wire) {
+                           bool shouldRemove = wire->id == wireId;
+                            if (shouldRemove) {
+                               wire->onInputChanged(false);
+                           }
+                           return shouldRemove;
+                        }),
+            wires.end()
+            );
+}
+
+std::unique_ptr<Gate>* CircuitModel::findGateById(int gateId) {
+    for (auto& gate : gates) {
+        if (gate->id == gateId) {
+            return &gate;
         }
-        return shouldRemove;
-    });
+    }
+    return nullptr; // Gate with the specified ID not found
 }

@@ -56,7 +56,8 @@ signals:
     void removed();
 
     /// @brief Emitted when the wire's value changes
-    void updated();
+    /// @param value - The value of this wire
+    void updated(bool value);
 };
 
 #endif

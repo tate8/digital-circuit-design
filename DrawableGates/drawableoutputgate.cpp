@@ -1,5 +1,4 @@
 #include "DrawableGates/drawableoutputgate.h"
-#include "Gates/gate.h"
 #include <QPixmap>
 #include <QPointF>
 
@@ -9,7 +8,7 @@ constexpr int TOTAL_PADDING = PADDING * 2;
 constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
 
-DrawableOutputGate::DrawableOutputGate(Gate* gate) : DrawableGate(gate) {}
+DrawableOutputGate::DrawableOutputGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
 QPointF DrawableOutputGate::getInputOffset(int input) {
     return QPoint(PADDING + 15, (IMAGE_HEIGHT * 0.5) + PADDING);
@@ -21,7 +20,7 @@ QPointF DrawableOutputGate::getOutputOffset() {
 
 QPixmap DrawableOutputGate::getImage() {
     QPixmap map;
-    if (gate->getOutputState()) {
+    if (value) {
         map = QPixmap(":/gatePorts/lightOn.png");
     } else {
         map = QPixmap(":/gatePorts/lightOff.png");

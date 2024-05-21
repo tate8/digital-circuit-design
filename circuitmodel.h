@@ -25,19 +25,19 @@ public:
 
 private:
     /// @brief The list of circuit gates
-    QList<std::unique_ptr<Gate>> gates;
+    std::vector<std::unique_ptr<Gate>> gates;
 
     /// @brief The list of circuit wires
-    QList<std::unique_ptr<Wire>> wires;
+    std::vector<std::unique_ptr<Wire>> wires;
 
     /// @brief The first input gate
-    std::unique_ptr<Gate> inputGate1;
+    int inputGate1Id;
 
     /// @brief The second input gate
-    std::unique_ptr<Gate> inputGate2;
+    int inputGate2Id;
 
     /// @brief The output gate
-    std::unique_ptr<Gate> outputGate;
+    int outputGateId;
 
     /// @brief Simulates the circuit with given inputs, and returns the result
     /// @param input1 - The first input
@@ -49,12 +49,17 @@ private:
     /// @param newValue - The new boolean value to set it to
     void setInputGateValue(int gateId, bool newValue);
 
+    /// @brief Gets a gate by its id
+    /// @param gateId - The gate's id
+    /// @return A pointer to the gate's unique pointer
+    std::unique_ptr<Gate>* findGateById(int gateId);
+
 public slots:
     /// @brief Adds a connection between the output of a specified gate to the input of another
-    /// @param outputGate - The gate whose output is being connected
-    /// @param inputGate - The gate whose input is being connected
+    /// @param outputGateId - The id of the gate whose output is being connected
+    /// @param inputGateId - The id of the gate whose input is being connected
     /// @param port - The input port which is being connected to
-    void addWireConnection(Gate* outputGate, Gate* inputGate, int port);
+    void addWireConnection(int outputGateId, int inputGateId, int port);
 
     /// @brief Prepares the level by clearing it then placing two input gates
     void reset();
@@ -64,16 +69,10 @@ public slots:
     /// @param wireId - The id of the wire to remove
     void removeWireConnection(int wireId);
 
-    /// @brief Removes a wire from between two gates
-    /// @param startGate - The wire's start gate
-    /// @param endGate - The wire's end gate
-    /// @param inputPort - Which port's input to remove
-    void removeWireConnection(Gate* startGate, Gate* endGate, int inputPort);
-
     /// @brief Adds a gate to the circuit
     /// @param gateType - What type of gate to create
-    /// @return A pointer to the new gate
-    std::unique_ptr<Gate> addGate(GateType gateType);
+    /// @return The new gate's id
+    int addGate(GateType gateType);
 
     /// @brief Removes a gate and its connections from the circuit
     /// @param gateId - The id of the gate to remove
@@ -91,28 +90,36 @@ public slots:
 
 signals:
     /// @brief Emitted when a gate is added
-    /// @param gate - The new gate
-    void gateAdded(Gate* gate);
+    /// @param gateId - The id of the gate
+    /// @param value - The value of the gate
+    /// @param type - The type of the gate
+    void gateAdded(int gateId, bool value, GateType type);
 
     /// @brief Emitted when a gate is removed
-    /// @param gate - The removed gate
-    void gateRemoved(Gate* gate);
+    /// @param gateId - The id of the gate
+    void gateRemoved(int gateId);
 
     /// @brief Emitted when a gate is updated
-    /// @param gate - The updated gate
-    void gateUpdated(Gate* gate);
+    /// @param gateId - The id of the gate
+    /// @param value - The value of the gate
+    void gateUpdated(int gateId, bool value);
 
     /// @brief Emitted when a wire is added
-    /// @param wire - The added wire
-    void wireAdded(Wire* wire);
+    /// @param wireId - The id of the wire
+    /// @param value - The value of the wire
+    /// @param startGateId - The id of the start gate
+    /// @param endGateId - The id of the end gate
+    /// @param port - Which port on the end gate the wire connects
+    void wireAdded(int wireId, bool value, int startGateId, int endGateId, int port);
 
     /// @brief Emitted when a wire is removed
-    /// @param wire - The removed wire
-    void wireRemoved(Wire* wire);
+    /// @param wireId - The id of the wire
+    void wireRemoved(int wireId);
 
     /// @brief Emitted when a wire is updated
-    /// @param wire - The updated wire
-    void wireUpdated(Wire* wire);
+    /// @param wireId - The id of the wire
+    /// @param value - The value of the wire
+    void wireUpdated(int wireId, bool value);
 
     /// @brief Emitted when the circuit's run is a success
     void runSuccess();

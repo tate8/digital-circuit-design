@@ -2,14 +2,13 @@
 #define DRAWABLEWIRE_H
 
 #include <QGraphicsItem>
-#include "wire.h"
 #include "DrawableGates/drawablegate.h"
 
 class DrawableWire : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    explicit DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent = nullptr);
+    explicit DrawableWire(int wireId, bool value, DrawableGate* start, DrawableGate* end, int port, QGraphicsItem* parent = nullptr);
     ~DrawableWire();
 
     /// @brief Gets the bounding rect
@@ -17,6 +16,10 @@ public:
 
     /// @brief Updates the start and end positions based on the wire's gates
     void updatePositions();
+
+    /// @brief Sets the value of the wire
+    /// @param value - The new value
+    void setValue(bool value);
 
 private:
     /// @brief Paints the wire
@@ -37,9 +40,6 @@ private:
     /// @brief Updates the shape to just be a line
     QPainterPath shape() const override;
 
-    /// @brief The model's wire
-    Wire* wire;
-
     /// @brief The start gate
     DrawableGate* startGate;
 
@@ -54,6 +54,15 @@ private:
 
     /// @brief If the user is hovering over the wire
     bool isHovering;
+
+    /// @brief The id of the wire
+    int wireId;
+
+    /// @brief The value of the wire
+    bool value;
+
+    /// @brief The port of the wire
+    int port;
 
 public slots:
     /// @brief Emits the deleteRequested signal

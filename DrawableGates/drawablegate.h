@@ -29,13 +29,11 @@ protected:
     /// @return an point for the offset
     virtual QPointF getOutputOffset() = 0;
 
-    /// @brief gate a Gate pointer to this gate
-    Gate* gate;
-public:
-    explicit DrawableGate(Gate* gate, QGraphicsItem* parent = nullptr);
+    /// @brief The id of the real gate
+    int gateId;
 
-    /// @brief Gets the bounding rect
-    QRectF boundingRect() const override;
+    /// @brief The value of the real gate
+    bool value;
 
     /// @brief Paints the gate
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
@@ -59,43 +57,53 @@ public:
     /// @brief Qt method to listen to item moves
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
-    /// \brief setPos Sets the cucrrent positions of this gate
-    /// \param x an int for the x positions
-    /// \param y an int for the y position
+public:
+    explicit DrawableGate(int gateId, bool value, QGraphicsItem* parent = nullptr);
+
+    /// @brief Gets the bounding rect
+    QRectF boundingRect() const override;
+
+    /// @brief setPos Sets the cucrrent positions of this gate
+    /// @param x an int for the x positions
+    /// @param y an int for the y position
     void setPos(int x, int y);
 
-    /// \brief getInputPos Gets the input position of the specified port
-    /// \param input an int for the ID of the port
-    /// \return a QPoint object of the X,Y position of the port
+    /// @brief getInputPos Gets the input position of the specified port
+    /// @param input an int for the ID of the port
+    /// @return a QPoint object of the X,Y position of the port
     QPointF getInputPos(int input);
 
-    /// \brief getOutputPos Gets the output position of the port
-    /// \return a QPoint object of the X,Y position of the port
+    /// @brief getOutputPos Gets the output position of the port
+    /// @return a QPoint object of the X,Y position of the port
     QPointF getOutputPos();
 
-    /// \brief getBounds Gets the bounds of this gate
-    /// \return a QSize object with the bounds
+    /// @brief getBounds Gets the bounds of this gate
+    /// @return a QSize object with the bounds
     virtual QSize getBounds() const = 0;
 
-    /// \brief getImage Gets the image for this gate
-    /// \return a QPixmap object with the image
+    /// @brief getImage Gets the image for this gate
+    /// @return a QPixmap object with the image
     virtual QPixmap getImage() = 0;
 
-    /// \brief getNumInputs Gets how many input ports this gate has
-    /// \return and int with the number of ports
+    /// @brief getNumInputs Gets how many input ports this gate has
+    /// @return and int with the number of ports
     virtual int getNumInputs() = 0;
 
-    /// @brief Gets the gate
-    Gate* getGate();
+    /// @brief Sets the value of this gate
+    /// @param value - The new value
+    void setValue(bool value);
+
+    /// @brief Gets the id of the real gate
+    int getId();
 
 public slots:
     void requestDeleteIfSelected();
 
 signals:
     /// @brief Emitted when the user is starting to draw a wire
-    /// @param startGate - The starting gate
+    /// @param startGateId - The id of the starting gate
     /// @param point - The point drawing from
-    void startDrawingWire(Gate* startGate, QPointF point);
+    void startDrawingWire(int startGateId, QPointF point);
 
     /// @brief Emitted when the user is dragging a wire
     /// @param point - The point

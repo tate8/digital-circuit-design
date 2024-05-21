@@ -4,7 +4,6 @@
 #include "DrawableGates/drawableoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
-#include "wire.h"
 
 CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
 {
@@ -28,41 +27,29 @@ CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
 
 CircuitCanvas::~CircuitCanvas()
 {
-    for (auto it = wireMap.begin(); it != wireMap.end(); ++it)
-    {
-        delete it.value();
-    }
-
     wireMap.clear();
-
-    for (auto it = gateMap.begin(); it != gateMap.end(); ++it)
-    {
-        delete it.value();
-    }
-
     gateMap.clear();
 }
 
-void CircuitCanvas::addDrawableGate(Gate* gate)
+void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
 {
-    DrawableGate* drawableGate = nullptr;
+    std::unique_ptr<DrawableGate> drawableGate;
 
-    if (gate->type == GateType::AndGateType)
+    if (type == GateType::AndGateType)
     {
-        drawableGate = new DrawableAndGate(gate);
+        drawableGate = std::make_unique<DrawableAndGate>(gateId, value);
     }
-    else if (gate->type == GateType::InputGateType)
+    else if (type == GateType::InputGateType)
     {
         // Additional logic for toggling the inputs
-        DrawableInputGate* drawableInputGate = new DrawableInputGate(gate);
-        connect(drawableInputGate, &DrawableInputGate::toggleInput, this, [this](int gateId){
+        drawableGate = std::make_unique<DrawableInputGate>(gateId, value);
+        connect(dynamic_cast<DrawableInputGate*>(drawableGate.get()), &DrawableInputGate::toggleInput, this, [this](int gateId){
             emit requestedToggleInput(gateId);
         });
-        drawableGate = drawableInputGate;
     }
-    else if (gate->type == GateType::OutputGateType)
+    else if (type == GateType::OutputGateType)
     {
-        drawableGate = new DrawableOutputGate(gate);
+        drawableGate = std::make_unique<DrawableOutputGate>(gateId, value);
     }
     else
     {
@@ -71,72 +58,66 @@ void CircuitCanvas::addDrawableGate(Gate* gate)
     }
 
 
-    addGateInteractionConnections(drawableGate);
-    addWireDrawingConnections(drawableGate);
-    scene->addItem(drawableGate);
-    gateMap.insert(gate, drawableGate);
+    addGateInteractionConnections(drawableGate.get());
+    addWireDrawingConnections(drawableGate.get());
+    scene->addItem(drawableGate.get());
+    gateMap.emplace(gateId, std::move(drawableGate));
 }
 
-void CircuitCanvas::removeDrawableGate(Gate* gate)
+void CircuitCanvas::removeDrawableGate(int gateId)
 {
-    assert(gate && gateMap.contains(gate));
+    assert(gateMap.find(gateId) != gateMap.end());
 
-    DrawableGate* drawableGate = gateMap.value(gate);
+    std::unique_ptr<DrawableGate>& drawableGate = gateMap[gateId];
+
     if (drawableGate)
     {
-        removeGateInteractionConnections(drawableGate);
-        removeWireDrawingConnections(drawableGate);
-        scene->removeItem(drawableGate);
-        delete drawableGate;
-        gateMap.remove(gate);
+        removeGateInteractionConnections(drawableGate.get());
+        removeWireDrawingConnections(drawableGate.get());
+        scene->removeItem(drawableGate.get());
+        gateMap.erase(gateId);
     }
 }
 
-void CircuitCanvas::updateDrawableGate(Gate* gate)
+void CircuitCanvas::updateDrawableGate(int gateId, bool value)
 {
-    assert(gate && gateMap.contains(gate));
+    assert(gateMap.find(gateId) != gateMap.end());
 
-    DrawableGate* drawableGate = gateMap.value(gate);
-    if (drawableGate)
-    {
-        drawableGate->update();
-    }
+    std::unique_ptr<DrawableGate>& drawableGate = gateMap[gateId];
+    drawableGate->setValue(value);
 }
 
-void CircuitCanvas::addDrawableWire(Wire* wire)
+void CircuitCanvas::addDrawableWire(int wireId, bool value, int startGateId, int endGateId, int port)
 {
-    DrawableWire* drawableWire = new DrawableWire(wire, gateMap.value(wire->startGate), gateMap.value(wire->endGate));
-    addWireInteractionConnections(drawableWire);
-    scene->addItem(drawableWire);
-    wireMap.insert(wire, drawableWire);
+    auto drawableWire = std::make_unique<DrawableWire>(wireId, value, gateMap.at(startGateId).get(), gateMap.at(endGateId).get(), port);
+    addWireInteractionConnections(drawableWire.get());
+    scene->addItem(drawableWire.get());
+    wireMap.emplace(wireId, std::move(drawableWire));
 }
 
-void CircuitCanvas::removeDrawableWire(Wire* wire)
+void CircuitCanvas::removeDrawableWire(int wireId)
 {
-    assert(wire && wireMap.contains(wire));
+     assert(wireMap.find(wireId) != wireMap.end());
 
-    DrawableWire* drawableWire = wireMap.value(wire);
+    std::unique_ptr<DrawableWire>& drawableWire = wireMap[wireId];
+
     if (drawableWire)
     {
-        removeWireInteractionConnections(drawableWire);
-        scene->removeItem(drawableWire);
-        delete drawableWire;
-        wireMap.remove(wire);
+        removeWireInteractionConnections(drawableWire.get());
+        scene->removeItem(drawableWire.get());
+        wireMap.erase(wireId);
     }
 }
 
-void CircuitCanvas::updateDrawableWire(Wire* wire)
+void CircuitCanvas::updateDrawableWire(int wireId, bool value)
 {
-    assert(wire && wireMap.contains(wire));
+    assert(wireMap.find(wireId) != wireMap.end());
 
-    DrawableWire* drawableWire = wireMap.value(wire);
-    if (drawableWire)
-    {
-        drawableWire->update();
-    }
+    std::unique_ptr<DrawableWire>& drawableWire = wireMap[wireId];
+    drawableWire->setValue(value);
 }
 
-DrawableGate* CircuitCanvas::getGateAtPosition(QPointF& scenePos)
+int CircuitCanvas::getGateIdAtPosition(QPointF& scenePos)
 {
     for (QGraphicsItem* item : scene->items(scenePos))
     {
@@ -146,10 +127,10 @@ DrawableGate* CircuitCanvas::getGateAtPosition(QPointF& scenePos)
         DrawableGate* gate = dynamic_cast<DrawableGate*>(item);
         if (gate)
         {
-            return gate;
+            return gate->getId();
         }
     }
-    return nullptr;
+    return -1;
 }
 
 void CircuitCanvas::addWireDrawingConnections(DrawableGate* gate)
@@ -203,7 +184,7 @@ void CircuitCanvas::removeGateInteractionConnections(DrawableGate* gate)
     disconnect(gate, &DrawableGate::deleteRequested, this, &CircuitCanvas::requestDeleteGate);
 }
 
-void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
+void CircuitCanvas::startDrawingWire(int startGateId, QPointF startPos)
 {
     // Customize pen color
     QPen pen(Qt::gray);
@@ -212,7 +193,7 @@ void CircuitCanvas::startDrawingWire(Gate* startGate, QPointF startPos)
     currentWire = new QGraphicsLineItem(QLineF(startPos, startPos));
     currentWire->setPen(pen);
 
-    wireStartGate = startGate;
+    wireStartGateId = startGateId;
 
     scene->addItem(currentWire);
 }
@@ -227,19 +208,19 @@ void CircuitCanvas::updateDrawingWire(QPointF newPos)
 
 void CircuitCanvas::endDrawingWire(QPointF endPos)
 {
-    DrawableGate* endGate = getGateAtPosition(endPos);
-    if (wireStartGate && endGate)
+    int endGateId = getGateIdAtPosition(endPos);
+    if (endGateId != -1)
     {
         // Determine which input pin the wire is closest to on the end gate
         int closestPin = -1;
         // The maximum distance from the pin required to make a connection
         int snappingDistance = 50;
         double minDistance = std::numeric_limits<double>::max();
-        int numInputs = endGate->getNumInputs();
+        int numInputs = gateMap.at(endGateId)->getNumInputs();
         // Loop through all inputs and determine which one is closest
         for (int i = 0; i < numInputs; i++)
         {
-            QPointF pinPos = endGate->getInputPos(i);
+            QPointF pinPos = gateMap.at(endGateId)->getInputPos(i);
             double distance = QLineF(endPos, pinPos).length();
             if (distance < minDistance) {
                 closestPin = i;
@@ -249,7 +230,7 @@ void CircuitCanvas::endDrawingWire(QPointF endPos)
 
         if (closestPin != -1 && minDistance <= snappingDistance)
         {
-            emit requestedConnection(wireStartGate, endGate->getGate(), closestPin);
+            emit requestedConnection(wireStartGateId, endGateId, closestPin);
         }
     }
 

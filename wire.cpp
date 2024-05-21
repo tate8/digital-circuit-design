@@ -40,7 +40,7 @@ void Wire::onInputChanged(bool newState)
     value = newState;
     endGate->setInputPortState(inputPort, newState);
 
-    emit updated();
+    emit updated(value);
 }
 
 bool Wire::getValue()

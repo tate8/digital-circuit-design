@@ -9,8 +9,8 @@
 #include <QObject>
 #include <QKeyEvent>
 
-DrawableGate::DrawableGate(Gate* gate, QGraphicsItem* parent)
-    : QObject(nullptr), QGraphicsItem(parent), gate(gate)
+DrawableGate::DrawableGate(int gateId, bool value, QGraphicsItem* parent)
+    : QObject(nullptr), QGraphicsItem(parent), gateId(gateId), value(value)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -48,7 +48,7 @@ void DrawableGate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 void DrawableGate::requestDeleteIfSelected()
 {
     if (isSelected()) {
-        emit deleteRequested(gate->id);
+        emit deleteRequested(gateId);
     }
 }
 
@@ -62,7 +62,7 @@ void DrawableGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
     {
         dragging = true;
         QGraphicsItem::mousePressEvent(event);
-        emit startDrawingWire(getGate(), mapToScene(outputPos));
+        emit startDrawingWire(gateId, mapToScene(outputPos));
     } else
     {
         QGraphicsItem::mousePressEvent(event);
@@ -125,6 +125,13 @@ QPointF DrawableGate::getOutputPos()
     return mapToScene(getOutputOffset());
 }
 
-Gate* DrawableGate::getGate() {
-    return gate;
+void DrawableGate::setValue(bool value)
+{
+    this->value = value;
+    update();
+}
+
+int DrawableGate::getId()
+{
+    return gateId;
 }

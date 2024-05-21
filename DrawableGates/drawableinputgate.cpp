@@ -1,5 +1,4 @@
 #include "DrawableGates/drawableinputgate.h"
-#include "Gates/gate.h"
 #include <QPixmap>
 #include <QPointF>
 #include <QGraphicsSceneMouseEvent>
@@ -10,7 +9,7 @@ constexpr int TOTAL_PADDING = PADDING * 2;
 constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
 
-DrawableInputGate::DrawableInputGate(Gate* gate) : DrawableGate(gate) {}
+DrawableInputGate::DrawableInputGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
 QPointF DrawableInputGate::getInputOffset(int input) {
     Q_UNUSED(input);
@@ -26,7 +25,7 @@ QPointF DrawableInputGate::getOutputOffset() {
 
 QPixmap DrawableInputGate::getImage() {
     QPixmap map;
-    if (gate->getOutputState()) {
+    if (value) {
         map = QPixmap(":/gatePorts/inputOn.png");
     } else {
          map = QPixmap(":/gatePorts/inputOff.png");
@@ -54,7 +53,7 @@ void DrawableInputGate::mousePressEvent(QGraphicsSceneMouseEvent* event)
 void DrawableInputGate::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->scenePos() == pressLocation) {
-        emit toggleInput(gate->id);
+        emit toggleInput(gateId);
     }
     DrawableGate::mouseReleaseEvent(event);
 }

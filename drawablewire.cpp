@@ -5,8 +5,8 @@
 #include <QKeyEvent>
 #include <QCursor>
 
-DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, QGraphicsItem* parent)
-    : QObject(nullptr), QGraphicsItem(parent), wire(wire), startGate(start), endGate(end)
+DrawableWire::DrawableWire(int wireId, bool value, DrawableGate* start, DrawableGate* end, int port, QGraphicsItem* parent)
+    : QObject(nullptr), QGraphicsItem(parent), startGate(start), endGate(end), wireId(wireId), value(value), port(port)
 {
     setAcceptHoverEvents(true);
     setFlags(QGraphicsItem::ItemIsSelectable);
@@ -20,7 +20,7 @@ DrawableWire::DrawableWire(Wire* wire, DrawableGate* start, DrawableGate* end, Q
     });
 
     startPoint = startGate->getOutputPos();
-    endPoint = endGate->getInputPos(wire->inputPort);
+    endPoint = endGate->getInputPos(port);
 
     updatePositions();
 }
@@ -29,14 +29,14 @@ DrawableWire::~DrawableWire()
 {
     disconnect(startGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
     disconnect(endGate, &DrawableGate::positionChanged, this, &DrawableWire::updatePositions);
-    emit deleteRequested(wire->id);
+    emit deleteRequested(wireId);
 }
 
 void DrawableWire::updatePositions()
 {
     // Get the new start and end points, and then ask to redraw
     startPoint = startGate->getOutputPos();
-    endPoint = endGate->getInputPos(wire->inputPort);
+    endPoint = endGate->getInputPos(port);
     prepareGeometryChange();
 }
 
@@ -59,7 +59,7 @@ void DrawableWire::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
     int wireWidth = 3;
 
     QPen pen;
-    if (wire->getValue()) {
+    if (value) {
         pen = QPen(QColor(102, 204, 102), wireWidth);
     } else {
         pen = QPen(Qt::gray, wireWidth);
@@ -117,6 +117,12 @@ void DrawableWire::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 void DrawableWire::requestDeleteIfSelected()
 {
     if (isSelected()) {
-        emit deleteRequested(wire->id);
+        emit deleteRequested(wireId);
     }
+}
+
+void DrawableWire::setValue(bool value)
+{
+    this->value = value;
+    update();
 }

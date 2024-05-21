@@ -1,13 +1,9 @@
-#include "QtWidgets/qheaderview.h"
-#include "ui_leveltutorialdialog.h"
 #include "levelscreen.h"
 #include "ui_levelscreen.h"
-#include "wire.h"
 #include "GateTypes.h"
 #include <QPushButton>
 #include <QPainter>
 #include <QDialog>
-#include <qOverload>
 
 LevelScreen::LevelScreen(QWidget *parent)
     : QWidget(parent)
@@ -42,29 +38,12 @@ LevelScreen::LevelScreen(QWidget *parent)
     });
 
     // Updating Circuit Canvas based on model changes
-    connect(&model, &CircuitModel::gateAdded, this, [this](Gate* gate){
-        ui->circuitCanvas->addDrawableGate(gate);
-    });
-
-    connect(&model, &CircuitModel::gateRemoved, this, [this](Gate* gate){
-        ui->circuitCanvas->removeDrawableGate(gate);
-    });
-
-    connect(&model, &CircuitModel::gateUpdated, this, [this](Gate* gate){
-        ui->circuitCanvas->updateDrawableGate(gate);
-    });
-
-    connect(&model, &CircuitModel::wireAdded, this, [this](Wire* wire){
-        ui->circuitCanvas->addDrawableWire(wire);
-    });
-
-    connect(&model, &CircuitModel::wireRemoved, this, [this](Wire* wire){
-        ui->circuitCanvas->removeDrawableWire(wire);
-    });
-
-    connect(&model, &CircuitModel::wireUpdated, this, [this](Wire* gate){
-        ui->circuitCanvas->updateDrawableWire(gate);
-    });
+    connect(&model, &CircuitModel::gateAdded, ui->circuitCanvas, &CircuitCanvas::addDrawableGate);
+    connect(&model, &CircuitModel::gateRemoved, ui->circuitCanvas, &CircuitCanvas::removeDrawableGate);
+    connect(&model, &CircuitModel::gateUpdated, ui->circuitCanvas, &CircuitCanvas::updateDrawableGate);
+    connect(&model, &CircuitModel::wireAdded, ui->circuitCanvas, &CircuitCanvas::addDrawableWire);
+    connect(&model, &CircuitModel::wireRemoved, ui->circuitCanvas, &CircuitCanvas::removeDrawableWire);
+    connect(&model, &CircuitModel::wireUpdated, ui->circuitCanvas, &CircuitCanvas::updateDrawableWire);
 
     // Updating the model based on Circuit Canvas
     connect(ui->circuitCanvas, &CircuitCanvas::requestedConnection, &model, &CircuitModel::addWireConnection);
