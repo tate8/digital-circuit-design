@@ -12,12 +12,10 @@ AnimationWorld::AnimationWorld()
 {
     // World for confetti
     b2Vec2 gravity(0.0f,  -3.0f);
-    confettiWorld = new b2World(gravity);
 }
 
 AnimationWorld::~AnimationWorld()
 {
-    delete confettiWorld;
     delete theWorld;
 }
 
@@ -150,83 +148,6 @@ void AnimationWorld::simulateWorld()
             ++it;
         }
     }
-}
-
-QVector<QPair<b2Body*, QColor>> AnimationWorld::getConfettiBodies() const
-{
-    return confettiBodies;
-}
-
-
-void AnimationWorld::createConfetti(float x, float y)
-{
-    // if (confettiTimer && confettiTimer->isActive())
-    // {
-    //     confettiTimer->stop();
-    // } else
-    // {
-    //     confettiTimer = new QTimer(this);
-    // }
-    for (auto& pair : confettiBodies)
-    {
-        confettiWorld->DestroyBody(pair.first);
-    }
-    confettiBodies.clear();
-
-
-    float centerX = x / SCALE;
-    float centerY = y / SCALE;
-    float spread = 0.4f;
-
-    for (int i = 0; i < 300; ++i)
-    {
-        float angle = QRandomGenerator::global()->generate() / static_cast<double>(UINT_MAX) * 2 * M_PI;
-        float randomMinSpeed = 3.0f + static_cast<float>(QRandomGenerator::global()->bounded(2));
-        float randomMaxSpeed = 10.0f + static_cast<float>(QRandomGenerator::global()->bounded(5));
-        float speed = randomSpeed(randomMinSpeed, randomMaxSpeed);
-        float angularVelocity = 0.2f;
-
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.linearDamping = 0.5;
-        bodyDef.angularVelocity = angularVelocity;
-        bodyDef.position.Set(centerX + spread * cos(angle), centerY + spread * sin(angle));
-
-        b2Body* body = confettiWorld->CreateBody(&bodyDef);
-
-        b2PolygonShape dynamicBox;
-        dynamicBox.SetAsBox(1.0f / SCALE, 1.0f / SCALE);
-
-        b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
-        fixtureDef.density = 0.1f;
-        fixtureDef.friction = 0.3f;
-        fixtureDef.restitution = 0.8f;
-        body->CreateFixture(&fixtureDef);
-        body->SetLinearVelocity(b2Vec2(speed * cos(angle), speed * sin(angle)));
-
-        // Select a random color from the confettiColors list and store body as a pair
-        QColor color = confettiColors[rand() % confettiColors.size()];
-        confettiBodies.push_back(qMakePair(body, color));
-    }
-}
-
-void AnimationWorld::updateConfetti()
-{
-    const float timeStep = 1.0f / 80.0f;
-    const int velocityIterations = 8;
-    const int positionIterations = 3;
-    confettiWorld->Step(timeStep, velocityIterations, positionIterations);
-
-    emit confettiUpdated();
-}
-
-void AnimationWorld::startConfetti()
-{
-    // simulate confetti
-    confettiTimer = new QTimer(this);
-    connect(confettiTimer, &QTimer::timeout, this, &AnimationWorld::updateConfetti);
-    confettiTimer->start(20);
 }
 
 float AnimationWorld::randomPosition(int max)

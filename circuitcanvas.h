@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QRubberBand>
+#include "GateTypes.h"
 
 class CircuitCanvas : public QGraphicsView
 {

@@ -24,6 +24,7 @@ LevelPicker::~LevelPicker()
 
 void LevelPicker::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter painter(this);
 
     int gateWidth = 100; // Set the width for all gate images

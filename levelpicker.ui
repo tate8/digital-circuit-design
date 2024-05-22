@@ -47,7 +47,7 @@
     <string>Home</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="level1Button">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -69,7 +69,7 @@
     <string>1</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_3">
+  <widget class="QPushButton" name="level2Button">
    <property name="geometry">
     <rect>
      <x>480</x>
@@ -88,7 +88,7 @@
     <string>2</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_4">
+  <widget class="QPushButton" name="level3Button">
    <property name="geometry">
     <rect>
      <x>780</x>
@@ -107,7 +107,7 @@
     <string>3</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="level4Button">
    <property name="geometry">
     <rect>
      <x>170</x>
@@ -126,7 +126,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_5">
+  <widget class="QPushButton" name="level5Button">
    <property name="geometry">
     <rect>
      <x>480</x>
@@ -145,7 +145,7 @@
     <string>5</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_6">
+  <widget class="QPushButton" name="level6Button">
    <property name="geometry">
     <rect>
      <x>780</x>

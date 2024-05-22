@@ -11,6 +11,7 @@ constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 DrawableOutputGate::DrawableOutputGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
 QPointF DrawableOutputGate::getInputOffset(int input) {
+    Q_UNUSED(input);
     return QPoint(PADDING + 15, (IMAGE_HEIGHT * 0.5) + PADDING);
 }
 

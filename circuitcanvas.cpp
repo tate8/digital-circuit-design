@@ -4,6 +4,7 @@
 #include "DrawableGates/drawableoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
+#include "GateTypes.h"
 
 CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
 {

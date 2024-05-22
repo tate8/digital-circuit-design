@@ -60,27 +60,9 @@ public:
     /// @return Pointer to the world
     b2World *getWorld() const;
 
-    /// @brief Gets the confetti bodies as a pair. The body contains the information
-    /// for the confetti, and each piece is generated with a color.
-    QVector<QPair<b2Body*, QColor>> getConfettiBodies() const;
-
     /// @brief Gets the image resource string corresponding to a body
     /// @param body - The body whose image to get
     QString getImageForBody(b2Body* body) const;
-
-public slots:
-    /// @brief Creates confetti at x,y coords. based on the ui screen size.
-    void createConfetti(float x, float y);
-
-    /// @brief Starts the simulation for a given amount of time.
-    void startConfetti();
-
-    /// @brief Steps through the confetti world to simulate the animation.
-    void updateConfetti();
-
-signals:
-    /// @brief Signal to send back to the view for the animation to be updated.
-    void confettiUpdated();
 
 private:
     /// @brief the width of the Box2D world.
@@ -94,10 +76,6 @@ private:
 
     /// @brief Defines the Box2D world that holds the bodies and simulation.
     b2World *theWorld;
-
-    /// @brief Defines the Box2D world for the confetti simulation when the user
-    /// completes a circuit correclty.
-    b2World *confettiWorld;
 
     /// @brief List of all bodies created for background animation.
     QVector<b2Body*> bodies{};
@@ -127,23 +105,6 @@ private:
     /// @param maxSpeed: maximum speed
     /// @return a random speed for the world simulation
     float randomSpeed(float minSpeed, float maxSpeed);
-
-    /// @brief Stores the colors for the confetti.
-    QVector<QColor> confettiColors =
-    {
-        QColor(247, 91, 171),   // pink
-        QColor(4, 202, 246),    // blue
-        QColor(204, 170, 255),  // purple
-        QColor(255, 180, 93),   // orange
-        QColor(255, 255, 0),    // yellow
-        QColor(16, 253, 28)     // green
-    };
-
-    /// @brief Stores the confetti bodies with their body definitions and color.
-    QVector<QPair<b2Body*, QColor>> confettiBodies{};
-
-    /// @brief Timer for confetti animation
-    QTimer* confettiTimer = nullptr;
 
     /// @brief Timer for gates animation
     QTimer* gatesTimer = nullptr;

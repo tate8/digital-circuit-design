@@ -4,20 +4,22 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QDialog>
+#include <QMessageBox>
+
 
 LevelScreen::LevelScreen(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LevelScreen)
     , model()
-    , table(new TruthTable)
-    , animation(new AnimationWorld())
 {
     ui->setupUi(this);
 
     connect(ui->runButton, &QPushButton::clicked, this, [this](){
-        std::vector<bool> expected { false, false, false, false };
-        model.run(expected);
+        model.run(currentConfig.expectedResults);
     });
+
+    connect(&model, &CircuitModel::runSuccess, this, &LevelScreen::handleRunSuccess);
+    connect(&model, &CircuitModel::runFailure, this, &LevelScreen::handleRunFailure);
 
     // Add Gate Buttons
     connect(ui->andButton, &QPushButton::clicked, &model, [this](){
@@ -55,11 +57,6 @@ LevelScreen::LevelScreen(QWidget *parent)
     connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteGate, &model, &CircuitModel::removeGateAndConnections);
     connect(ui->circuitCanvas, &CircuitCanvas::requestedDeleteWire, &model, qOverload<int>(&CircuitModel::removeWireConnection));
     connect(ui->circuitCanvas, &CircuitCanvas::requestedToggleInput, &model, &CircuitModel::toggleInputGateValue);
-    connect(this, &LevelScreen::prepareLevel, &model, [this](){
-        // Reset model state
-        model.reset(2);
-    });
-
     // Connect utility buttons to circuit canvas
     connect(ui->zoomSlider, &QSlider::valueChanged, this, [this](int position){
         const double minZoom = 0.1;
@@ -67,83 +64,98 @@ LevelScreen::LevelScreen(QWidget *parent)
         double zoomLevel = minZoom + (maxZoom - minZoom) * (position / 100.0);
         ui->circuitCanvas->zoomToValue(zoomLevel);
     });
-
-
-    model.reset(2);
 }
 
 LevelScreen::~LevelScreen()
 {
     delete ui;
-    delete table;
 }
 
-void LevelScreen::prepareSandbox(bool mode)
+void LevelScreen::handleRunSuccess()
 {
-    emit prepareLevel();
-    // setup level to sandbox mode
-    if(mode == 1)
-    {
-        ui->runButton->hide();
-        ui->norButton->show();
-        ui->xorButton->show();
-        ui->nandButton->show();
-        ui->outputButton->show();
-    }
-    // reset screen to level mode
-    else
-    {
-        ui->runButton->show();
-        ui->norButton->hide();
-        ui->xorButton->hide();
-        ui->nandButton->hide();
-        ui->outputButton->hide();
+    // Create a QMessageBox
+    QMessageBox successBox;
+    successBox.setWindowTitle("Congratulations!");
+    successBox.setText("You have completed the level successfully.");
 
-    }
+    // Set a custom icon
+    successBox.setIconPixmap(QPixmap(":/images/success_icon.png"));
+
+    // Add a detailed message
+    successBox.setInformativeText("Well done! You can now proceed to the next level.");
+
+    // Add a "Close" button
+    QPushButton* closeButton = successBox.addButton(tr("Close"), QMessageBox::AcceptRole);
+    closeButton->setStyleSheet("QPushButton { color: white; background-color: #4CAF50; border: none; padding: 8px 16px; }"
+                               "QPushButton:hover { background-color: #45a049; }");
+
+    // Connect the button to close the message box
+    connect(closeButton, &QPushButton::clicked, &successBox, &QMessageBox::close);
+
+    // Set the size of the message box
+    successBox.setMinimumWidth(400);
+
+    // Set the font size and style
+    QFont font = successBox.font();
+    font.setPointSize(12);
+    font.setBold(true);
+    successBox.setFont(font);
+
+    // Show the message box
+    successBox.exec();
 }
 
-void LevelScreen::paintEvent(QPaintEvent *event)
+void LevelScreen::handleRunFailure()
 {
-    QPainter painter(this);
-    QPen pen(Qt::black, 2);
-    painter.setPen(pen);
+}
 
-    if (runWasSuccessful)
-    {
-        for (const auto& pair : animation->getConfettiBodies())
-        {
-            b2Vec2 position = pair.first->GetPosition();
-            int x = static_cast<int>(position.x * animation->SCALE - 5);
-            int y = static_cast<int>(300 - position.y * animation->SCALE - 5);
+void LevelScreen::setupLevel(const TutorialConfig& config)
+{
+    currentConfig = config;  // Store the config
 
-            painter.setBrush(pair.second);
-            painter.drawRect(x, y, 10, 10);
+    // Set title text
+    ui->titleText->setText(QString::fromStdString(config.titleText));
+
+    // Set tutorial text
+    ui->tutorialText->setText(QString::fromStdString(config.tutorialText));
+
+    // Reset the model with the number of inputs specified in the config
+    model.reset(config.numInputs);
+
+    // Set allowed gates
+    ui->andButton->setVisible(false);
+    ui->orButton->setVisible(false);
+    ui->notButton->setVisible(false);
+    ui->norButton->setVisible(false);
+    ui->xorButton->setVisible(false);
+    ui->nandButton->setVisible(false);
+    ui->outputButton->setVisible(false);
+
+    for (const auto& gateType : config.allowedGates) {
+        switch (gateType) {
+        case GateType::AndGateType:
+            ui->andButton->setVisible(true);
+            break;
+        case GateType::OrGateType:
+            ui->orButton->setVisible(true);
+            break;
+        case GateType::NotGateType:
+            ui->notButton->setVisible(true);
+            break;
+        case GateType::NorGateType:
+            ui->norButton->setVisible(true);
+            break;
+        case GateType::XorGateType:
+            ui->xorButton->setVisible(true);
+            break;
+        case GateType::NandGateType:
+            ui->nandButton->setVisible(true);
+            break;
+        case GateType::SandboxOutputGateType:
+            ui->outputButton->setVisible(true);
+            break;
+        default:
+            break;
         }
     }
-}
-
-void LevelScreen::startConfetti()
-{
-    this->runWasSuccessful = true;
-    int centerX = this->width() / 2;
-    int centerY = this->height();
-    centerY = this->height() - centerY;
-    animation->createConfetti(centerX, centerY);
-    animation->startConfetti();
-
-    QTimer* animationTimer = new QTimer(this);
-    connect(animationTimer, &QTimer::timeout, this, &LevelScreen::stopConfetti);
-    animationTimer->setSingleShot(true);
-    animationTimer->start(3000); // play for 3 sec.
-}
-
-void LevelScreen::stopConfetti()
-{
-    this->runWasSuccessful = false;
-    this->update();
-}
-
-void LevelScreen::updateConfetti()
-{
-    this->update();
 }

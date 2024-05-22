@@ -154,7 +154,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>30</y>
+     <y>40</y>
      <width>281</width>
      <height>751</height>
     </rect>
@@ -166,13 +166,13 @@
     <attribute name="title">
      <string>Tutorial</string>
     </attribute>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="tutorialText">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>90</y>
-       <width>271</width>
-       <height>201</height>
+       <y>70</y>
+       <width>251</width>
+       <height>641</height>
       </rect>
      </property>
      <property name="text">
@@ -181,19 +181,22 @@
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="titleText">
      <property name="geometry">
       <rect>
-       <x>70</x>
+       <x>10</x>
        <y>10</y>
-       <width>131</width>
+       <width>251</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>18</pointsize>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="text">

@@ -11,6 +11,7 @@ HomeScreen::HomeScreen(MainWindow* window, AnimationWorld* world, QWidget *paren
     , ui(new Ui::HomeScreen)
     , world(world)
 {
+    Q_UNUSED(window);
 
     ui->setupUi(this);
 
@@ -30,6 +31,7 @@ HomeScreen::~HomeScreen()
 
 void HomeScreen::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter painter(this);
 
     int gateWidth = 100; // Set the width for all gate images

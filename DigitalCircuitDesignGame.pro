@@ -79,8 +79,8 @@ SOURCES += \
     Gates/notgate.cpp \
     Gates/orgate.cpp \
     Gates/sandboxoutputgate.cpp \
-    truthtable.cpp \
     Gates/outputgate.cpp \
+    tutorialconfig.cpp \
     wire.cpp\
     circuitcanvas.cpp\
     DrawableGates/drawableandgate.cpp\
@@ -162,7 +162,7 @@ HEADERS += \
     levelscreen.h \
     mainwindow.h \
     Gates/sandboxoutputgate.h \
-    truthtable.h \
+    tutorialconfig.h \
     wire.h\
     circuitcanvas.h\
     DrawableGates/drawableandgate.h\

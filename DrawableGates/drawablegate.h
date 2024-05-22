@@ -5,7 +5,6 @@
 #include <QPixmap>
 #include <QRect>
 #include <QObject>
-#include "Gates/gate.h"
 
 
 class DrawableGate : public QObject, public QGraphicsItem

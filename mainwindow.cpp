@@ -12,6 +12,7 @@
 #include <QAbstractItemView>
 #include <Box2D/Box2D.h>
 #include "homescreen.h"
+#include "tutorialconfig.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -55,12 +56,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // level screen to home
     connect(inLevel->ui->homeButton, &QPushButton::clicked, [=](){
-        if(inLevel->sandboxMode)
-        {
-            // if in sandbox mode, return to level mode when going home
-            inLevel->prepareSandbox(0);
-            inLevel->sandboxMode = 0;
-        }
         stackedLayout->setCurrentWidget(homeScreen);
     });
 
@@ -71,12 +66,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // sandbox to level screen
     connect(homeScreen->ui->sandboxButton, &QPushButton::clicked, [=](){
-        inLevel->prepareSandbox(1);
-        inLevel->sandboxMode = 1;
+        // inLevel->setupLevel(Tutorial1Config);
         stackedLayout->setCurrentWidget(inLevel);
     });
 
-    connect(levelPicker->ui->pushButton, &QPushButton::clicked, [=](){
+    connect(levelPicker->ui->level1Button, &QPushButton::clicked, [=](){
+        inLevel->setupLevel(Tutorial1Config);
         stackedLayout->setCurrentWidget(inLevel);
     });
 
