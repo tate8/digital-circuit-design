@@ -9,6 +9,7 @@
 #include "wire.h"
 #include "GateTypes.h"
 #include "memory"
+#include <QTimer>
 
 /// @brief The CircuitModel holds all logic for a digital circuit
 /// This includes things like adding and removing gates and wires, simulating
@@ -23,6 +24,8 @@ public:
     /// @brief Destroys the CircuitModel by cleaining up gates and wires
     ~CircuitModel();
 
+    static constexpr int RUN_ANIMATION_DELAY_MS = 500;
+
 private:
     /// @brief The list of circuit gates
     std::vector<std::unique_ptr<Gate>> gates;
@@ -30,19 +33,18 @@ private:
     /// @brief The list of circuit wires
     std::vector<std::unique_ptr<Wire>> wires;
 
-    /// @brief The first input gate
-    int inputGate1Id;
-
-    /// @brief The second input gate
-    int inputGate2Id;
+    /// @brief The ids of the input gates
+    std::vector<int> inputGateIds;
 
     /// @brief The output gate
     int outputGateId;
 
-    /// @brief Simulates the circuit with given inputs, and returns the result
-    /// @param input1 - The first input
-    /// @param input2 - The second input
-    bool simulateCircuit(bool input1, bool input2);
+    /// @brief A timer for the run simulation animation
+    QTimer* animationTimer;
+
+    /// @brief Sets the circuit's inputs, and returns the result
+    /// @param inputs - A list of the inputs to try
+    bool setInputs(const std::vector<bool>& inputs);
 
     /// @brief Changes the output value of the specified input gate
     /// @param gateId - The id of the input gate to change
@@ -62,7 +64,8 @@ public slots:
     void addWireConnection(int outputGateId, int inputGateId, int port);
 
     /// @brief Prepares the level by clearing it then placing two input gates
-    void reset();
+    /// @param numInputs - How many inputs should be added
+    void reset(int numInputs);
 
     /// @brief Removes a wire from between two gates
     /// If the wire with the specified id doesn't exist, this method will exit
@@ -84,9 +87,10 @@ public slots:
 
     /// @brief Runs the circuit on a truth table.
     /// Emits runSuccess or runFailure depending on the results
-    /// @param expected - An array of 4 booleans representing the expected results
-    /// when trying the circuit with inputs (0,0), (0,1), (1,0), and (1,1)
-    void run(const QVector<bool>&);
+    /// @param expected - An array of booleans representing the expected results
+    /// when trying the circuit with all combinations of inputs.
+    /// If there are 4 inputs, for example, there should be 16 entries
+    void run(const std::vector<bool>& expected);
 
 signals:
     /// @brief Emitted when a gate is added

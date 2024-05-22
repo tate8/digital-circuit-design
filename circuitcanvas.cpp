@@ -57,7 +57,7 @@ void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
         return;
     }
 
-
+    drawableGate.get()->setData(0, gateId);
     addGateInteractionConnections(drawableGate.get());
     addWireDrawingConnections(drawableGate.get());
     scene->addItem(drawableGate.get());
@@ -124,10 +124,10 @@ int CircuitCanvas::getGateIdAtPosition(QPointF& scenePos)
         if (!item)
             continue;  // Skip if the item is a nullptr
 
-        DrawableGate* gate = dynamic_cast<DrawableGate*>(item);
-        if (gate)
+        QVariant data = item->data(0); // Retrieve the data stored with key 0
+        if (data.isValid())
         {
-            return gate->getId();
+            return data.toInt(); // Convert QVariant to int and return
         }
     }
     return -1;

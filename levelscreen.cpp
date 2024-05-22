@@ -14,6 +14,11 @@ LevelScreen::LevelScreen(QWidget *parent)
 {
     ui->setupUi(this);
 
+    connect(ui->runButton, &QPushButton::clicked, this, [this](){
+        std::vector<bool> expected { false, false, false, false };
+        model.run(expected);
+    });
+
     // Add Gate Buttons
     connect(ui->andButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::AndGateType);
@@ -52,7 +57,7 @@ LevelScreen::LevelScreen(QWidget *parent)
     connect(ui->circuitCanvas, &CircuitCanvas::requestedToggleInput, &model, &CircuitModel::toggleInputGateValue);
     connect(this, &LevelScreen::prepareLevel, &model, [this](){
         // Reset model state
-        model.reset();
+        model.reset(2);
     });
 
     // Connect utility buttons to circuit canvas
@@ -64,7 +69,7 @@ LevelScreen::LevelScreen(QWidget *parent)
     });
 
 
-    model.reset();
+    model.reset(2);
 }
 
 LevelScreen::~LevelScreen()
@@ -79,7 +84,7 @@ void LevelScreen::prepareSandbox(bool mode)
     // setup level to sandbox mode
     if(mode == 1)
     {
-        ui->button_3->hide();
+        ui->runButton->hide();
         ui->norButton->show();
         ui->xorButton->show();
         ui->nandButton->show();
@@ -88,21 +93,12 @@ void LevelScreen::prepareSandbox(bool mode)
     // reset screen to level mode
     else
     {
-        ui->button_3->show();
+        ui->runButton->show();
         ui->norButton->hide();
         ui->xorButton->hide();
         ui->nandButton->hide();
         ui->outputButton->hide();
 
-    }
-}
-
-void LevelScreen::runButtonClicked()
-{
-    if(!table->getCurrentTable().isEmpty())
-    {
-        QVector<bool> expectedResults = table->getCurrentTable();
-        model.run(expectedResults);
     }
 }
 

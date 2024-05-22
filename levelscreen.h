@@ -47,10 +47,6 @@ public:
     /// @brief Flag to notify if the user circuit was completed successfully.
     bool runWasSuccessful = false;
 
-    /// @brief When the run button is clicked, this gets the
-    /// current truth table to compare with the circuit sequence.
-    void runButtonClicked();
-
     /// @brief Sets the current level to sandbox mode which adds more buttons and disables truth table
     /// @param mode - passing 1 sets the screen to sandbox mode, and 0 resets it to level mode
     void prepareSandbox(bool mode);

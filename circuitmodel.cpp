@@ -11,9 +11,12 @@
 #include "Gates/nandgate.h"
 #include "Gates/xorgate.h"
 #include "Gates/norgate.h"
+#include "QtCore/qdebug.h"
 #include <memory>
+#include <QEventLoop>
+#include <QTimer>
 
-CircuitModel::CircuitModel(QObject* parent) : QObject(parent)
+CircuitModel::CircuitModel(QObject* parent) : QObject(parent), animationTimer(new QTimer(this))
 {
 }
 
@@ -21,78 +24,103 @@ CircuitModel::~CircuitModel()
 {
 }
 
-bool CircuitModel::simulateCircuit(bool value1, bool value2)
+bool CircuitModel::setInputs(const std::vector<bool>& inputs)
 {
-    auto inputGate1 = findGateById(inputGate1Id)->get();
-    auto inputGate2 = findGateById(inputGate2Id)->get();
+    if (inputs.size() != inputGateIds.size()) {
+        qDebug() << "Wrong input size to CircuitModel::setInputs";
+        return false;
+    }
+
+    for (size_t i = 0; i < inputGateIds.size(); i++)
+    {
+        int id = inputGateIds.at(i);
+        int newValue = inputs.at(i);
+        auto inputGate = findGateById(id)->get();
+        inputGate->setOutputState(newValue);
+    }
+
     auto outputGate = findGateById(outputGateId)->get();
-
-    // Keep track of previous values to restore
-    bool prevInput1Value = inputGate1->getOutputState();
-    bool prevInput2Value = inputGate2->getOutputState();
-
-    // Set new outputs for the inputs
-    // This will start the signal propogation
-    inputGate1->setOutputState(value1);
-    inputGate2->setOutputState(value2);
-
-    // Get the result
     bool result = outputGate->getOutputState();
-
-    // Set input back to normal
-    inputGate1->setOutputState(prevInput1Value);
-    inputGate2->setOutputState(prevInput2Value);
-
     return result;
 }
 
 void CircuitModel::setInputGateValue(int gateId, bool newValue)
 {
-    auto inputGate1 = findGateById(inputGate1Id)->get();
-    auto inputGate2 = findGateById(inputGate2Id)->get();
-    if (inputGate1->id == gateId)
+    // Verify that the requested id is an input
+    for (const auto& id : inputGateIds)
     {
-        inputGate1->setOutputState(newValue);
-    }
-    else
-    {
-        inputGate2->setOutputState(newValue);
+        if (id == gateId)
+        {
+            auto inputGate = findGateById(id)->get();
+            inputGate->setOutputState(newValue);
+        }
     }
 }
 
 void CircuitModel::toggleInputGateValue(int gateId)
 {
-    auto inputGate1 = findGateById(inputGate1Id)->get();
-    auto inputGate2 = findGateById(inputGate2Id)->get();
-    if (inputGate1->id == gateId)
+    // Verify that the requested id is an input
+    for (const auto& id : inputGateIds)
     {
-        inputGate1->setOutputState(!inputGate1->getOutputState());
-    }
-    else
-    {
-        inputGate2->setOutputState(!inputGate2->getOutputState());
+        if (id == gateId)
+        {
+            auto inputGate = findGateById(id)->get();
+            inputGate->setOutputState(!inputGate->getOutputState());
+        }
     }
 }
 
-void CircuitModel::run(const QVector<bool>& expected)
+void CircuitModel::run(const std::vector<bool>& expected)
 {
-    // 00, 01, 10, 11
-    for (int i = 0; i < 4; i++)
-    {
-        // Extracts the second least significant bit in i
-        bool input1 = (i >> 1) & 1;
-        // Extracts the least significant bit in i
-        bool input2 = i & 1;
+    if (static_cast<int>(std::log2(expected.size())) != static_cast<int>(inputGateIds.size())) {
+        qDebug() << "Wrong expected size to CircuitModel::run";
+        return;
+    }
 
-        bool result = simulateCircuit(input1, input2);
+    // Get a copy of all input values before the run
+    std::vector<bool> prevInputValues;
+    for (const auto& id : inputGateIds)
+    {
+        auto inputGate = findGateById(id)->get();
+        bool inputGateValue = inputGate->getOutputState();
+        prevInputValues.push_back(inputGateValue);
+    }
+
+    QEventLoop loop;
+    connect(animationTimer, &QTimer::timeout, &loop, &QEventLoop::quit);
+
+    // Iterate over all expected input combinations
+    for (int i = 0; i < static_cast<int>(expected.size()); i++)
+    {
+        std::vector<bool> currentInputs;
+        // Fill currentInputs with bits of i
+        for (int bit = 0; bit < static_cast<int>(inputGateIds.size()); ++bit)
+        {
+            currentInputs.push_back((i >> bit) & 1);
+        }
+
+        bool result = setInputs(currentInputs);
+
+        animationTimer->start(RUN_ANIMATION_DELAY_MS);
+        loop.exec();
 
         if (result != expected[i])
         {
+            for (size_t i = 0; i < inputGateIds.size(); i++)
+            {
+                auto inputGate = findGateById(inputGateIds.at(i))->get();
+                inputGate->setOutputState(prevInputValues.at(i));
+            }
             emit runFailure();
             return;
         }
     }
 
+    for (size_t i = 0; i < inputGateIds.size(); i++)
+    {
+        auto inputGate = findGateById(inputGateIds.at(i))->get();
+        inputGate->setOutputState(prevInputValues.at(i));
+    }
     emit runSuccess();
 }
 
@@ -139,14 +167,18 @@ void CircuitModel::addWireConnection(int outputGateId, int inputGateId, int port
     emit wireAdded(newWireId, newWireValue, newWireStartGateId, newWireEndGateId, newWirePort);
 }
 
-void CircuitModel::reset()
+void CircuitModel::reset(int numInputs)
 {
     wires.clear();
     gates.clear();
 
     // Add input and output gates at the start
-    inputGate1Id = addGate(GateType::InputGateType);
-    inputGate2Id = addGate(GateType::InputGateType);
+    inputGateIds.clear();
+    for (int i = 0; i < numInputs; i++)
+    {
+        inputGateIds.push_back(addGate(GateType::InputGateType));
+    }
+
     outputGateId = addGate(GateType::OutputGateType);
 }
 
