@@ -1,48 +1,40 @@
-// #include "DrawableGates/drawablenandgate.h"
-// #include "Gates/nandgate.h"
+#include "DrawableGates/drawablenandgate.h"
+#include <QPixmap>
+#include <QPointF>
 
-// DrawableNandGate::DrawableNandGate(NandGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int DrawableNandGate::getInputOffsetX(int input)
-// {
-//     return 0;
-// }
 
-// int DrawableNandGate::getInputOffsetY(int input)
-// {
-//     if (input == 0)
-//     {
-//         return 13;
-//     } else if (input == 1)
-//     {
-//         return 52;
-//     }
-//     return 0;
-// }
+DrawableNandGate::DrawableNandGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
-// int DrawableNandGate::getOutputOffsetX()
-// {
-//     return 120;
-// }
+QPointF DrawableNandGate::getInputOffset(int input) {
+    if (input == 0) {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.2) + PADDING);
+    } else {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.8) + PADDING);
+    }
+}
 
-// int DrawableNandGate::getOutputOffsetY()
-// {
-//     return 33;
-// }
+QPointF DrawableNandGate::getOutputOffset() {
+    QPixmap pixmap = QPixmap(":/gatePorts/nandGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
 
-// QPixmap DrawableNandGate::getImage()
-// {
-//     return QPixmap(":/gatePorts/nandGatePorts.png").scaled(120, 120);
-// }
+    return QPointF(width + PADDING, TOTAL_HEIGHT * 0.5);
+}
 
-// QSize DrawableNandGate::getBounds()
-// {
-//     return QSize(120, 65);
-// }
+QPixmap DrawableNandGate::getImage() {
+    return QPixmap(":/gatePorts/nandGatePorts.png").scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-// int DrawableNandGate::getNumInputs()
-// {
-//     return 2;
-// }
+QSize DrawableNandGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/nandGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
+
+int DrawableNandGate::getNumInputs() {
+    return 2;
+}

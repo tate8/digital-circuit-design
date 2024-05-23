@@ -1,6 +1,10 @@
 #include "circuitcanvas.h"
 #include "DrawableGates/drawableandgate.h"
 #include "DrawableGates/drawableinputgate.h"
+#include "DrawableGates/drawablenandgate.h"
+#include "DrawableGates/drawablenorgate.h"
+#include "DrawableGates/drawablenotgate.h"
+#include "DrawableGates/drawableorgate.h"
 #include "DrawableGates/drawableoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
@@ -36,14 +40,36 @@ void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
 {
     std::unique_ptr<DrawableGate> drawableGate;
 
+    if (type != GateType::InputGateType) inputGateCount = 0;
+
     if (type == GateType::AndGateType)
     {
         drawableGate = std::make_unique<DrawableAndGate>(gateId, value);
     }
+    else if (type == GateType::NotGateType)
+    {
+        drawableGate = std::make_unique<DrawableNotGate>(gateId, value);
+    }
+    else if (type == GateType::OrGateType)
+    {
+        drawableGate = std::make_unique<DrawableOrGate>(gateId, value);
+    }
+    else if (type == GateType::NandGateType)
+    {
+        drawableGate = std::make_unique<DrawableNandGate>(gateId, value);
+    }
+    else if (type == GateType::NorGateType)
+    {
+        drawableGate = std::make_unique<DrawableNorGate>(gateId, value);
+    }
+    else if (type == GateType::XorGateType)
+    {
+        drawableGate = std::make_unique<DrawableNorGate>(gateId, value);
+    }
     else if (type == GateType::InputGateType)
     {
         int xPosition = -100;
-        int yPosition = 100 * inputGateCount;
+        int yPosition = 150 * inputGateCount;
         inputGateCount++;
         // Additional logic for toggling the inputs
         drawableGate = std::make_unique<DrawableInputGate>(gateId, value);

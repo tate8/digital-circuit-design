@@ -1,48 +1,40 @@
-// #include "DrawableGates/drawablenorgate.h"
-// #include "Gates/norgate.h"
-// #include <QPixmap>
+#include "DrawableGates/drawablenorgate.h"
+#include <QPixmap>
+#include <QPointF>
 
-// DrawableNorGate::DrawableNorGate(NorGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int DrawableNorGate::getInputOffsetX(int input)
-// {
-//     return 0;
-// }
 
-// int DrawableNorGate::getInputOffsetY(int input)
-// {
-//     if (input == 0)
-//     {
-//         return 13;
-//     } else if (input == 1)
-//     {
-//         return 52;
-//     }
-//     return 0;
-// }
+DrawableNorGate::DrawableNorGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
-// int DrawableNorGate::getOutputOffsetX()
-// {
-//     return 120;
-// }
+QPointF DrawableNorGate::getInputOffset(int input) {
+    if (input == 0) {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.2) + PADDING);
+    } else {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.8) + PADDING);
+    }
+}
 
-// int DrawableNorGate::getOutputOffsetY()
-// {
-//     return 33;
-// }
+QPointF DrawableNorGate::getOutputOffset() {
+    QPixmap pixmap = QPixmap(":/gatePorts/norGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
 
-// QPixmap DrawableNorGate::getImage() {
-//     return QPixmap(":/gatePorts/norGatePorts.png").scaled(120, 120);
-// }
+    return QPointF(width + PADDING, TOTAL_HEIGHT * 0.5);
+}
 
-// QSize DrawableNorGate::getBounds()
-// {
-//    return QSize(120, 65);
-// }
+QPixmap DrawableNorGate::getImage() {
+    return QPixmap(":/gatePorts/norGatePorts.png").scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-// int DrawableNorGate::getNumInputs()
-// {
-//     return 2;
-// }
+QSize DrawableNorGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/norGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
+
+int DrawableNorGate::getNumInputs() {
+    return 2;
+}

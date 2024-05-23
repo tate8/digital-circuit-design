@@ -1,49 +1,40 @@
-// #include "DrawableGates/drawableorgate.h"
-// #include "Gates/orgate.h"
-// #include <QPixmap>
+#include "DrawableGates/drawableorgate.h"
+#include <QPixmap>
+#include <QPointF>
 
-// DrawableOrGate::DrawableOrGate(OrGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int DrawableOrGate::getInputOffsetX(int input)
-// {
-//     return 0;
-// }
 
-// int DrawableOrGate::getInputOffsetY(int input)
-// {
-//     if (input == 0)
-//     {
-//         return 13;
-//     } else if (input == 1)
-//     {
-//         return 52;
-//     }
-//     return 0;
-// }
+DrawableOrGate::DrawableOrGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
-// int DrawableOrGate::getOutputOffsetX()
-// {
-//     return 120;
-// }
+QPointF DrawableOrGate::getInputOffset(int input) {
+    if (input == 0) {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.2) + PADDING);
+    } else {
+        return QPoint(PADDING, (IMAGE_HEIGHT * 0.8) + PADDING);
+    }
+}
 
-// int DrawableOrGate::getOutputOffsetY()
-// {
-//     return 32;
-// }
+QPointF DrawableOrGate::getOutputOffset() {
+    QPixmap pixmap = QPixmap(":/gatePorts/orGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
 
-// QPixmap DrawableOrGate::getImage()
-// {
-//     return QPixmap(":/gatePorts/orGatePorts.png").scaled(120, 120, Qt::KeepAspectRatio);
-// }
+    return QPointF(width + PADDING, TOTAL_HEIGHT * 0.5);
+}
 
-// QSize DrawableOrGate::getBounds()
-// {
-//     return QSize(120, 65);
-// }
+QPixmap DrawableOrGate::getImage() {
+    return QPixmap(":/gatePorts/orGatePorts.png").scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-// int DrawableOrGate::getNumInputs()
-// {
-//     return 2;
-// }
+QSize DrawableOrGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/orGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
+
+int DrawableOrGate::getNumInputs() {
+    return 2;
+}

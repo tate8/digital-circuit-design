@@ -1,45 +1,37 @@
-// #include "DrawableGates/drawablenotgate.h"
-// #include "Gates/notgate.h"
-// #include <QPixmap>
+#include "DrawableGates/drawablenotgate.h"
+#include <QPixmap>
+#include <QPointF>
 
-// DrawableNotGate::DrawableNotGate(NotGate* gate) : DrawableGate(gate)
-// {
-// }
+constexpr int IMAGE_HEIGHT = 60;
+constexpr int PADDING = 25;
+constexpr int TOTAL_PADDING = PADDING * 2;
+constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
-// int DrawableNotGate::getInputOffsetX(int input)
-// {
-//     return 0;
-// }
 
-// int DrawableNotGate::getInputOffsetY(int input)
-// {
-//     if(input == 0) {
-//         return 35;
-//     }
-//     return 0;
-// }
+DrawableNotGate::DrawableNotGate(int gateId, bool value) : DrawableGate(gateId, value) {}
 
-// int DrawableNotGate::getOutputOffsetX()
-// {
-//     return 120;
-// }
+QPointF DrawableNotGate::getInputOffset(int input) {
+    Q_UNUSED(input);
+    return QPoint(PADDING, (IMAGE_HEIGHT * 0.5) + PADDING);
+}
 
-// int DrawableNotGate::getOutputOffsetY()
-// {
-//     return 35;
-// }
+QPointF DrawableNotGate::getOutputOffset() {
+    QPixmap pixmap = QPixmap(":/gatePorts/notGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
 
-// QPixmap DrawableNotGate::getImage()
-// {
-//     return QPixmap(":/gatePorts/notGatePorts.png").scaled(120, 120);
-// }
+    return QPointF(width + PADDING, TOTAL_HEIGHT * 0.5);
+}
 
-// QSize DrawableNotGate::getBounds()
-// {
-//     return QSize(120, 70);
-// }
+QPixmap DrawableNotGate::getImage() {
+    return QPixmap(":/gatePorts/notGatePorts.png").scaledToHeight(IMAGE_HEIGHT, Qt::SmoothTransformation);
+}
 
-// int DrawableNotGate::getNumInputs()
-// {
-//     return 2;
-// }
+QSize DrawableNotGate::getBounds() const {
+    QPixmap pixmap = QPixmap(":/gatePorts/andGatePorts.png");
+    int width = pixmap.width() * IMAGE_HEIGHT / pixmap.height();
+    return QSize(width + TOTAL_PADDING, TOTAL_HEIGHT);
+}
+
+int DrawableNotGate::getNumInputs() {
+    return 1;
+}
