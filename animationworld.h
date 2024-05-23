@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QRandomGenerator>
 #include <QMap>
+#include <qcursor.h>
 
 /// @brief This class manages the physics-based animation of objects
 /// in a simulated 2D world using the Box2D library.
@@ -47,6 +48,9 @@ public:
     ///  animation.
     void simulateWorld();
 
+    /// @brief Updates the cursor position in the world.
+    void updateCursorPosition(QPoint cursorPosition);
+
     /// @brief Resizes the Box2D world when the ui window is resized.
     /// @param newWidth - width of the screen
     /// @param newHeight - height of the screen
@@ -67,6 +71,9 @@ public:
 private:
     /// @brief the width of the Box2D world.
     int width;
+
+    /// @brief the position of the cursor in the world.
+    QPoint cursorPosition;
 
     /// @brief the height of the Box2D world.
     int height;
@@ -111,6 +118,7 @@ private:
 
     /// @brief Map from body to its image resource string
     QMap<b2Body*, QString> bodyImageMap;
+
 };
 
 #endif // ANIMATIONWORLD_H

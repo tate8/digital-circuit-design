@@ -70,6 +70,7 @@ void AnimationWorld::createRandomBodyAtTop()
     float restitution = 0.8f;
     float angularVelocity = 2.0f;
     float linearSpeed = randomSpeed(MIN_SPEED, MAX_SPEED);
+
     b2Vec2 linearVelocity(0, linearSpeed);
     float initialAngle = QRandomGenerator::global()->bounded(2 * M_PI);
     createBody(x, y, dynamicBoxSize, density, friction, restitution, angularVelocity, linearVelocity, initialAngle);
@@ -111,6 +112,7 @@ b2World *AnimationWorld::getWorld() const
     return theWorld;
 }
 
+
 void AnimationWorld::simulateWorld()
 {
     theWorld->Step(TIMESTEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
@@ -148,7 +150,29 @@ void AnimationWorld::simulateWorld()
             ++it;
         }
     }
+    updateCursorPosition(QCursor::pos());
 }
+
+void AnimationWorld::updateCursorPosition(QPoint cursorPosition)
+{
+    // Get the current mouse position
+    cursorPosition = QCursor::pos();
+
+    // Calculate the direction based on the mouse position
+    float direction = 0.0f;
+    if (cursorPosition.x() < this->width / 2) {
+        direction = -1.0f; // Move left
+    } else {
+        direction = 1.0f; // Move right
+    }
+
+    // Update the direction of the existing shapes
+    for (auto body : bodies) {
+        b2Vec2 linearVelocity = body->GetLinearVelocity();
+        linearVelocity.x = (direction) * std::abs(linearVelocity.x);
+        body->SetLinearVelocity(linearVelocity);
+        body->SetAngularVelocity(direction * 4.0f);
+    }}
 
 float AnimationWorld::randomPosition(int max)
 {
