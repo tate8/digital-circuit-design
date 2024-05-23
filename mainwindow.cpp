@@ -55,23 +55,48 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // level screen to home
-    connect(inLevel->ui->homeButton, &QPushButton::clicked, [=](){
+    connect(inLevel->ui->homeButton, &QPushButton::clicked, this, [=](){
         stackedLayout->setCurrentWidget(homeScreen);
     });
 
     // home screen to levelpicker
-    connect(homeScreen->ui->levelsButton, &QPushButton::clicked, [=](){
+    connect(homeScreen->ui->levelsButton, &QPushButton::clicked, this, [=](){
         stackedLayout->setCurrentWidget(levelPicker);
     });
 
     // sandbox to level screen
-    connect(homeScreen->ui->sandboxButton, &QPushButton::clicked, [=](){
+    connect(homeScreen->ui->sandboxButton, &QPushButton::clicked, this, [=](){
         // inLevel->setupLevel(Tutorial1Config);
         stackedLayout->setCurrentWidget(inLevel);
     });
 
-    connect(levelPicker->ui->level1Button, &QPushButton::clicked, [=](){
+    connect(levelPicker->ui->level1Button, &QPushButton::clicked, this, [=](){
         inLevel->setupLevel(Tutorial1Config);
+        stackedLayout->setCurrentWidget(inLevel);
+    });
+
+    connect(levelPicker->ui->level2Button, &QPushButton::clicked, this, [=](){
+        inLevel->setupLevel(Tutorial2Config);
+        stackedLayout->setCurrentWidget(inLevel);
+    });
+
+    connect(levelPicker->ui->level3Button, &QPushButton::clicked, this, [=](){
+        inLevel->setupLevel(Tutorial3Config);
+        stackedLayout->setCurrentWidget(inLevel);
+    });
+
+    connect(levelPicker->ui->level4Button, &QPushButton::clicked, this, [=](){
+        inLevel->setupLevel(Tutorial4Config);
+        stackedLayout->setCurrentWidget(inLevel);
+    });
+
+    connect(levelPicker->ui->level5Button, &QPushButton::clicked, this, [=](){
+        inLevel->setupLevel(Tutorial5Config);
+        stackedLayout->setCurrentWidget(inLevel);
+    });
+
+    connect(levelPicker->ui->level6Button, &QPushButton::clicked, this, [=](){
+        inLevel->setupLevel(Tutorial6Config);
         stackedLayout->setCurrentWidget(inLevel);
     });
 

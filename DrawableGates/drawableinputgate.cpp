@@ -9,7 +9,10 @@ constexpr int TOTAL_PADDING = PADDING * 2;
 constexpr int TOTAL_HEIGHT = IMAGE_HEIGHT + TOTAL_PADDING;
 
 
-DrawableInputGate::DrawableInputGate(int gateId, bool value) : DrawableGate(gateId, value) {}
+DrawableInputGate::DrawableInputGate(int gateId, bool value) : DrawableGate(gateId, value)
+{
+    setFlag(QGraphicsItem::ItemIsMovable, false);
+}
 
 QPointF DrawableInputGate::getInputOffset(int input) {
     Q_UNUSED(input);

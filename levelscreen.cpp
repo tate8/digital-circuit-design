@@ -73,40 +73,30 @@ LevelScreen::~LevelScreen()
 
 void LevelScreen::handleRunSuccess()
 {
-    // Create a QMessageBox
-    QMessageBox successBox;
-    successBox.setWindowTitle("Congratulations!");
-    successBox.setText("You have completed the level successfully.");
+    QMessageBox box;
+    box.setWindowTitle("Success");
+    box.setText("Congratulations! You have completed the level successfully.");
 
-    // Set a custom icon
-    successBox.setIconPixmap(QPixmap(":/images/success_icon.png"));
-
-    // Add a detailed message
-    successBox.setInformativeText("Well done! You can now proceed to the next level.");
-
-    // Add a "Close" button
-    QPushButton* closeButton = successBox.addButton(tr("Close"), QMessageBox::AcceptRole);
-    closeButton->setStyleSheet("QPushButton { color: white; background-color: #4CAF50; border: none; padding: 8px 16px; }"
-                               "QPushButton:hover { background-color: #45a049; }");
+    // Add a close button
+    box.addButton(QMessageBox::Close);
 
     // Connect the button to close the message box
-    connect(closeButton, &QPushButton::clicked, &successBox, &QMessageBox::close);
-
-    // Set the size of the message box
-    successBox.setMinimumWidth(400);
-
-    // Set the font size and style
-    QFont font = successBox.font();
-    font.setPointSize(12);
-    font.setBold(true);
-    successBox.setFont(font);
-
-    // Show the message box
-    successBox.exec();
+    QObject::connect(box.button(QMessageBox::Close), &QAbstractButton::clicked, &box, &QMessageBox::close);
+    box.exec();
 }
 
 void LevelScreen::handleRunFailure()
 {
+    QMessageBox box;
+    box.setWindowTitle("Try Again");
+    box.setText("Oops! Your circuit didn't work as expected. Don't give up! Double-check your connections and logic gates, and give it another shot.");
+
+    // Add a close button
+    box.addButton(QMessageBox::Close);
+
+    // Connect the button to close the message box
+    QObject::connect(box.button(QMessageBox::Close), &QAbstractButton::clicked, &box, &QMessageBox::close);
+    box.exec();
 }
 
 void LevelScreen::setupLevel(const TutorialConfig& config)

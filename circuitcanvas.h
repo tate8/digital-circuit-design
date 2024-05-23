@@ -51,6 +51,8 @@ private:
     /// @brief Flag that is set if the user is dragging an item around the scene
     bool draggingItem;
 
+    int inputGateCount = 0;
+
     /// @brief Connects for drawing wires
     /// @param gate - The gate to connect
     void addWireDrawingConnections(DrawableGate* gate);

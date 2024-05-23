@@ -42,8 +42,27 @@ void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
     }
     else if (type == GateType::InputGateType)
     {
+        int xPosition = -100;
+        int yPosition = 100 * inputGateCount;
+        inputGateCount++;
         // Additional logic for toggling the inputs
         drawableGate = std::make_unique<DrawableInputGate>(gateId, value);
+        QGraphicsItem* parentItem = drawableGate.get();
+        parentItem->setPos(xPosition, yPosition);
+
+        // Add a text item to display the index
+        QGraphicsTextItem* textItem = scene->addText(QString::number(inputGateCount));
+        textItem->setParentItem(parentItem);
+
+        // Calculate the position relative to the parent item
+        QRectF parentBoundingRect = parentItem->boundingRect();
+        qreal textX = parentBoundingRect.right() - 100; // Adjust the horizontal position as needed
+        qreal textY = parentBoundingRect.top() + (parentBoundingRect.height() - textItem->boundingRect().height()) / 2;
+
+        // Set the position of the text item relative to the parent item
+        textItem->setPos(textX, textY);
+
+
         connect(dynamic_cast<DrawableInputGate*>(drawableGate.get()), &DrawableInputGate::toggleInput, this, [this](int gateId){
             emit requestedToggleInput(gateId);
         });
