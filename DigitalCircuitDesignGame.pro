@@ -55,8 +55,10 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
+    DrawableGates/drawablesandboxinputgate.cpp \
     Gates/andgate.cpp \
     Gates/gate.cpp \
+    Gates/sandboxinputgate.cpp \
     animationworld.cpp \
     circuitmodel.cpp \
     DrawableGates/drawableinputgate.cpp \
@@ -136,6 +138,7 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    DrawableGates/drawablesandboxinputgate.h \
     GateTypes.h \
     Gates/andgate.h \
     Gates/gate.h \
@@ -144,6 +147,7 @@ HEADERS += \
     Gates/notgate.h \
     Gates/orgate.h \
     Gates/outputgate.h \
+    Gates/sandboxinputgate.h \
     Gates/xorgate.h \
     animationworld.h \
     circuitmodel.h \

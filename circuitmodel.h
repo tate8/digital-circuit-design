@@ -65,7 +65,8 @@ public slots:
 
     /// @brief Prepares the level by clearing it then placing two input gates
     /// @param numInputs - How many inputs should be added
-    void reset(int numInputs);
+    /// @param numOutputs - How many outputs should be added
+    void reset(int numInputs, int numOutputs);
 
     /// @brief Removes a wire from between two gates
     /// If the wire with the specified id doesn't exist, this method will exit

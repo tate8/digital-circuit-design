@@ -40,6 +40,9 @@ LevelScreen::LevelScreen(QWidget *parent)
     connect(ui->nandButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::NandGateType);
     });
+    connect(ui->inputButton, &QPushButton::clicked, &model, [this](){
+        model.addGate(GateType::SandboxInputGateType);
+    });
     connect(ui->outputButton, &QPushButton::clicked, &model, [this](){
         model.addGate(GateType::SandboxOutputGateType);
     });
@@ -110,7 +113,10 @@ void LevelScreen::setupLevel(const TutorialConfig& config)
     ui->tutorialText->setText(QString::fromStdString(config.tutorialText));
 
     // Reset the model with the number of inputs specified in the config
-    model.reset(config.numInputs);
+    model.reset(config.numInputs, config.numOutputs);
+
+    // Show tutorial text
+    ui->tabWidget->setCurrentIndex(0);
 
     // Set allowed gates
     ui->andButton->setVisible(false);
@@ -119,6 +125,7 @@ void LevelScreen::setupLevel(const TutorialConfig& config)
     ui->norButton->setVisible(false);
     ui->xorButton->setVisible(false);
     ui->nandButton->setVisible(false);
+    ui->inputButton->setVisible(false);
     ui->outputButton->setVisible(false);
 
     for (const auto& gateType : config.allowedGates) {
@@ -140,6 +147,9 @@ void LevelScreen::setupLevel(const TutorialConfig& config)
             break;
         case GateType::NandGateType:
             ui->nandButton->setVisible(true);
+            break;
+        case GateType::InputGateType:
+            ui->inputButton->setVisible(true);
             break;
         case GateType::SandboxOutputGateType:
             ui->outputButton->setVisible(true);

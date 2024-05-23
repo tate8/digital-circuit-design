@@ -6,6 +6,7 @@
 #include "Gates/orgate.h"
 #include "Gates/inputgate.h"
 #include "Gates/outputgate.h"
+#include "Gates/sandboxinputgate.h"
 #include "Gates/sandboxoutputgate.h"
 #include "Gates/notgate.h"
 #include "Gates/nandgate.h"
@@ -46,28 +47,20 @@ bool CircuitModel::setInputs(const std::vector<bool>& inputs)
 
 void CircuitModel::setInputGateValue(int gateId, bool newValue)
 {
+    auto inputGate = findGateById(gateId)->get();
+
     // Verify that the requested id is an input
-    for (const auto& id : inputGateIds)
+    if (inputGate->type == GateType::InputGateType || inputGate->type == GateType::SandboxInputGateType)
     {
-        if (id == gateId)
-        {
-            auto inputGate = findGateById(id)->get();
-            inputGate->setOutputState(newValue);
-        }
+        inputGate->setOutputState(newValue);
     }
 }
 
 void CircuitModel::toggleInputGateValue(int gateId)
 {
-    // Verify that the requested id is an input
-    for (const auto& id : inputGateIds)
-    {
-        if (id == gateId)
-        {
-            auto inputGate = findGateById(id)->get();
-            inputGate->setOutputState(!inputGate->getOutputState());
-        }
-    }
+    auto maybeInputGate = findGateById(gateId)->get();
+    // setInputGateValue will figure out if the gate is valid to be toggled
+    setInputGateValue(gateId, !maybeInputGate->getOutputState());
 }
 
 void CircuitModel::run(const std::vector<bool>& expected)
@@ -167,7 +160,7 @@ void CircuitModel::addWireConnection(int outputGateId, int inputGateId, int port
     emit wireAdded(newWireId, newWireValue, newWireStartGateId, newWireEndGateId, newWirePort);
 }
 
-void CircuitModel::reset(int numInputs)
+void CircuitModel::reset(int numInputs, int numOutputs)
 {
     wires.clear();
     gates.clear();
@@ -179,7 +172,10 @@ void CircuitModel::reset(int numInputs)
         inputGateIds.push_back(addGate(GateType::InputGateType));
     }
 
-    outputGateId = addGate(GateType::OutputGateType);
+    for (int i = 0; i < numOutputs; i++)
+    {
+        outputGateId = addGate(GateType::OutputGateType);
+    }
 }
 
 int CircuitModel::addGate(GateType gateType)
@@ -211,6 +207,9 @@ int CircuitModel::addGate(GateType gateType)
         break;
     case GateType::NandGateType:
         newGate = std::make_unique<NandGate>(nullptr);
+        break;
+    case GateType::SandboxInputGateType:
+        newGate = std::make_unique<SandboxInputGate>(nullptr);
         break;
     case GateType::SandboxOutputGateType:
         newGate = std::make_unique<SandboxOutputGate>(nullptr);

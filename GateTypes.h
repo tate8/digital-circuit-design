@@ -15,6 +15,7 @@ enum class GateType
     NorGateType,
     NandGateType,
     XorGateType,
+    SandboxInputGateType,
     SandboxOutputGateType
 };
 

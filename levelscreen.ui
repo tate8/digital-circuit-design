@@ -169,9 +169,9 @@
     <widget class="QLabel" name="tutorialText">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>20</x>
        <y>70</y>
-       <width>251</width>
+       <width>241</width>
        <height>641</height>
       </rect>
      </property>
@@ -214,37 +214,15 @@
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>-1</x>
-       <y>-11</y>
+       <x>0</x>
+       <y>0</y>
        <width>281</width>
-       <height>781</height>
+       <height>721</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <widget class="QPushButton" name="orButton">
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>OR</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QPushButton" name="xorButton">
+      <item row="7" column="0">
+       <widget class="QPushButton" name="outputButton">
         <property name="minimumSize">
          <size>
           <width>80</width>
@@ -261,29 +239,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>XOR</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QPushButton" name="andButton">
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>AND</string>
+         <string>OUTPUT</string>
         </property>
        </widget>
       </item>
@@ -306,6 +262,28 @@
         </property>
         <property name="text">
          <string>NOR</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QPushButton" name="xorButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>XOR</string>
         </property>
        </widget>
       </item>
@@ -365,8 +343,52 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="andButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>AND</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="orButton">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>OR</string>
+        </property>
+       </widget>
+      </item>
       <item row="6" column="0">
-       <widget class="QPushButton" name="outputButton">
+       <widget class="QPushButton" name="inputButton">
         <property name="minimumSize">
          <size>
           <width>80</width>
@@ -383,7 +405,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>OUT</string>
+         <string>INPUT</string>
         </property>
        </widget>
       </item>

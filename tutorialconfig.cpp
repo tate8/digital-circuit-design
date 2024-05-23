@@ -24,6 +24,7 @@ TutorialConfig Tutorial1Config = {
     "Use the AND gate to achieve the specified outputs.</p>"
     "</body></html>",
     2, // Number of inputs
+    1,
     { GateType::AndGateType }, // Allowed gate
     { false, false, false, true } // Expected results for AND gate
 };
@@ -50,6 +51,7 @@ TutorialConfig Tutorial2Config = {
     "</table>"
     "</body></html>",
     2, // Number of inputs
+    1,
     { GateType::NotGateType, GateType::OrGateType }, // Allowed gates
     { true, true, true, false } // Expected results
 };
@@ -74,6 +76,7 @@ TutorialConfig Tutorial3Config = {
     "</table>"
     "</body></html>",
     2, // Number of inputs
+    1,
     { GateType::AndGateType, GateType::OrGateType, GateType::NotGateType }, // Allowed gates
     { true, false, false, true } // Expected results
 };
@@ -101,6 +104,7 @@ TutorialConfig Tutorial4Config = {
     "</table>"
     "</body></html>",
     2, // Number of inputs
+    1,
     { GateType::AndGateType, GateType::OrGateType, GateType::NotGateType }, // Allowed gates
     { false, true, true, false } // Expected results for XOR gate
 };
@@ -130,6 +134,7 @@ TutorialConfig Tutorial5Config = {
     "</table>"
     "</body></html>",
     3, // Number of inputs
+    1,
     { GateType::AndGateType, GateType::OrGateType, GateType::NotGateType }, // Allowed gates
     { false, true, false, true, true, false, true, false } // Expected results
 };
@@ -167,6 +172,27 @@ TutorialConfig Tutorial6Config = {
     "</table>"
     "</body></html>",
     4, // Number of inputs
+    1,
     { GateType::AndGateType, GateType::OrGateType, GateType::NotGateType, GateType::NandGateType, GateType::NorGateType }, // Allowed gates
     { false, true, false, true, true, false, true, false, false, true, false, true, true, false, true, false } // Expected results
+};
+
+// Sandbox Tutorial Configuration
+TutorialConfig SandboxTutorialConfig = {
+    "<html><body><h2>Sandbox Playground</h2></body></html>",
+    "<html><body>"
+    "<p>Welcome to the Sandbox Playground! This is your space to experiment and build circuits freely.</p>"
+    "<h3>Your Task:</h3>"
+    "<ul>"
+    "<li>Connect the input gates and experiment with different gate combinations.</li>"
+    "<li>Explore the functionality of AND, OR, NOT, NAND, NOR, and XOR gates.</li>"
+    "<li>Create your own logic circuits and observe their behavior.</li>"
+    "</ul>"
+    "<h3>Expected Output Values:</h3>"
+    "<p>No specific expected output values. This is your space to build and explore!</p>"
+    "</body></html>",
+    0, // Number of inputs
+    0,
+    { GateType::AndGateType, GateType::OrGateType, GateType::NotGateType, GateType::NandGateType, GateType::NorGateType, GateType::XorGateType, GateType::InputGateType, GateType::SandboxOutputGateType }, // Allowed gates
+    {} // No expected results for sandbox mode
 };

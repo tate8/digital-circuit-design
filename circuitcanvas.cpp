@@ -8,6 +8,9 @@
 #include "DrawableGates/drawableoutputgate.h"
 #include <QMouseEvent>
 #include <QPainter>
+#include "DrawableGates/drawablesandboxoutputgate.h"
+#include "DrawableGates/drawablesandboxinputgate.h"
+#include "DrawableGates/drawablexorgate.h"
 #include "GateTypes.h"
 
 CircuitCanvas::CircuitCanvas(QWidget *parent) : QGraphicsView(parent)
@@ -64,7 +67,7 @@ void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
     }
     else if (type == GateType::XorGateType)
     {
-        drawableGate = std::make_unique<DrawableNorGate>(gateId, value);
+        drawableGate = std::make_unique<DrawableXorGate>(gateId, value);
     }
     else if (type == GateType::InputGateType)
     {
@@ -93,9 +96,21 @@ void CircuitCanvas::addDrawableGate(int gateId, bool value, GateType type)
             emit requestedToggleInput(gateId);
         });
     }
+    else if (type == GateType::SandboxInputGateType)
+    {
+        drawableGate = std::make_unique<DrawableSandboxInputGate>(gateId, value);
+
+        connect(dynamic_cast<DrawableSandboxInputGate*>(drawableGate.get()), &DrawableSandboxInputGate::toggleInput, this, [this](int gateId){
+            emit requestedToggleInput(gateId);
+        });
+    }
     else if (type == GateType::OutputGateType)
     {
         drawableGate = std::make_unique<DrawableOutputGate>(gateId, value);
+    }
+    else if (type == GateType::SandboxOutputGateType)
+    {
+        drawableGate = std::make_unique<DrawableSandboxOutputGate>(gateId, value);
     }
     else
     {

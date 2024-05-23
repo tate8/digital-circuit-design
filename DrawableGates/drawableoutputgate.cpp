@@ -16,7 +16,7 @@ QPointF DrawableOutputGate::getInputOffset(int input) {
 }
 
 QPointF DrawableOutputGate::getOutputOffset() {
-    return QPointF();
+    return QPointF(NAN, NAN);
 }
 
 QPixmap DrawableOutputGate::getImage() {
